@@ -1,0 +1,29 @@
+#!/bin/env python3
+
+import os
+import shutil
+import sys
+import argparse
+
+
+def main():
+    subcommand = "open" if sys.argv[1][0] == '-' else sys.argv[1]
+    match subcommand:
+        case "open":
+        case "backup":
+
+parser = argparse.ArgumentParser(
+    description = "A tool for dumb file versioning",
+    usage = "",
+    epilog = ""
+)
+
+parser.add_argument(
+   "subcommand",
+
+   
+
+)
+
+
+if __name__ == "__main__": main()
