@@ -4,26 +4,38 @@ import os
 import shutil
 import sys
 import argparse
+import tomllib
 
 
-def main():
-    subcommand = "open" if sys.argv[1][0] == '-' else sys.argv[1]
-    match subcommand:
-        case "open":
-        case "backup":
-
+# parse command line flags
 parser = argparse.ArgumentParser(
     description = "A tool for dumb file versioning",
     usage = "",
     epilog = ""
 )
-
 parser.add_argument(
-   "subcommand",
-
-   
-
+    "product_path",
+    nargs="?",
+    default="."
 )
 
+args = parser.parse_args()
 
-if __name__ == "__main__": main()
+# go to the product directory
+os.chdir(args.product_path)
+
+
+# load product configration
+global config
+with open("./.phase","rb") as fp:
+    config = tomllib.load(fp)
+
+
+print(config)
+
+config["pattern"] = config["pattern"]\
+        .replace("%V",r"(\d+)")\
+        .replace(".",r"\.")
+
+
+print(config)

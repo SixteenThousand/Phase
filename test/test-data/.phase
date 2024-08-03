@@ -1,0 +1,3 @@
+pattern = "boring_stuff_v%V.ods"
+type = "number"
+format = "%d"
