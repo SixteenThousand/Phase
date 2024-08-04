@@ -4,7 +4,8 @@ DATA_DIR = "./tests/test-data"
 TEST_DIR = "./tests"
 
 def main():
-    process_escapes_test()
+    assert process_escapes_test()
+    print("All tests passed!")
 
 
 def process_escapes_test() -> bool:

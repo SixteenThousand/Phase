@@ -43,11 +43,16 @@ def process_escapes(filename: str) -> str:
     new_pattern = ""
     is_escaped = False
     for char in filename:
-        if char == "%":
+        if char == "%" and not is_escaped:
             is_escaped = True
             continue
-        if is_escaped and char == "V":
-            new_pattern += r"(\d+)"
+        if is_escaped:
+            is_escaped = False
+            if char == "V":
+                new_pattern += r"(\d+)"
+                continue
+        if char == ".":
+            new_pattern += r"\\."
             continue
         new_pattern += char
 
