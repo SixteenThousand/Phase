@@ -2,9 +2,12 @@
 
 import os
 import shutil
-import sys
 import argparse
 import tomllib
+from typing import Pattern
+
+
+type Product = dict[str,int]
 
 
 def main():
@@ -26,7 +29,7 @@ def main():
     global config
     with open("./.phase","rb") as fp:
         config = tomllib.load(fp)
-    config["pattern"] = pat_to_regex(config["pattern"])
+    versions: Product = get_product_versions(pat_to_regex(config["pattern"]))
 
 
 """
@@ -34,7 +37,7 @@ Converts a 'pattern' with a '%V' in it to a regular expression that matches
 any filename with a version number in place of the '%V'. Also converts any
 '%%' to a literal '%' so '%%V' will be matched to a literal '%V' in the
 pattern
-    @param pattern: the given 'pattern'
+    @param pattern: The given 'pattern'
 """
 def pat_to_regex(pattern: str) -> str:
     new_pattern: str = ""
@@ -52,8 +55,26 @@ def pat_to_regex(pattern: str) -> str:
             new_pattern += r"\\."
             continue
         new_pattern += char
-
     return new_pattern
+
+"""
+Gets the names & versions of all the product files in the current working 
+directory.
+    @param regex: The regular expression used to identify product files,
+        i.e. the output of pat_to_regex
+    @return A dictionary with filenames as keys and version numbers as 
+        values
+"""
+def get_product_versions(regex) -> Product:
+    match: Pattern
+    versions: Product = dict()
+    for filename in os.listdir():
+        match = regex.fullmatch(filename)
+        if  match == None:
+            continue
+        versions[filename] = int(match.group(1))
+    return versions
+
 
 
 if __name__ == "__main__": main()
