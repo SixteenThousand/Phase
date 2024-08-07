@@ -31,6 +31,10 @@ def main():
     with open("./.phase","rb") as fp:
         config = tomllib.load(fp)
     versions: Product = get_product_versions(pat_to_regex(config["pattern"]))
+    versions.sort(key=lambda product_file: product_file[1], reverse=True)
+    for i in range(config["max"],len(versions)):
+        os.system("rm -r "+versions[i][0])
+    os.system("xdg-open "+versions[0][0])
 
 
 """
@@ -75,7 +79,6 @@ def get_product_versions(regex) -> Product:
             continue
         versions.append( (filename, int(match.group(1))) )
     return versions
-
 
 
 if __name__ == "__main__": main()
