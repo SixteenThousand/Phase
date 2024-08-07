@@ -26,7 +26,7 @@ def main():
     global config
     with open("./.phase","rb") as fp:
         config = tomllib.load(fp)
-    config["pattern"] = process_escapes(config["pattern"])
+    config["pattern"] = pat_to_regex(config["pattern"])
 
 
 """
@@ -36,7 +36,7 @@ any filename with a version number in place of the '%V'. Also converts any
 pattern
     @param pattern: the given 'pattern'
 """
-def process_escapes(pattern: str) -> str:
+def pat_to_regex(pattern: str) -> str:
     new_pattern: str = ""
     is_escaped: bool = False
     for char in pattern:
