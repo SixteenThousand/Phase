@@ -4,10 +4,11 @@ import os
 import shutil
 import argparse
 import tomllib
-from typing import Pattern
+from typing import Match, List, Tuple
 
 
-type Product = dict[str,int]
+type Version = int
+type Product = List[Tuple[str,Version]]
 
 
 def main():
@@ -66,13 +67,13 @@ directory.
         values
 """
 def get_product_versions(regex) -> Product:
-    match: Pattern
-    versions: Product = dict()
+    match: Match
+    versions: Product = []
     for filename in os.listdir():
         match = regex.fullmatch(filename)
         if  match == None:
             continue
-        versions[filename] = int(match.group(1))
+        versions.append( (filename, int(match.group(1))) )
     return versions
 
 
