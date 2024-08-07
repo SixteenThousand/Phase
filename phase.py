@@ -19,30 +19,27 @@ def main():
         nargs="?",
         default="."
     )
-
     args = parser.parse_args()
-
     # go to the product directory
     os.chdir(args.product_path)
-
-
     # load product configration
     global config
     with open("./.phase","rb") as fp:
         config = tomllib.load(fp)
+    config["pattern"] = process_escapes(config["pattern"])
 
 
 """
-Converts a 'filename' with a '%V' in it to a regular expression that matches
+Converts a 'pattern' with a '%V' in it to a regular expression that matches
 any filename with a version number in place of the '%V'. Also converts any
 '%%' to a literal '%' so '%%V' will be matched to a literal '%V' in the
-filename
-    @param filename: the given 'filename'
+pattern
+    @param pattern: the given 'pattern'
 """
-def process_escapes(filename: str) -> str:
-    new_pattern = ""
-    is_escaped = False
-    for char in filename:
+def process_escapes(pattern: str) -> str:
+    new_pattern: str = ""
+    is_escaped: bool = False
+    for char in pattern:
         if char == "%" and not is_escaped:
             is_escaped = True
             continue
