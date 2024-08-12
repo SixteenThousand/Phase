@@ -2,9 +2,10 @@
 
 import os
 import shutil
+import re
 import argparse
 import tomllib
-from typing import Match, List, Tuple
+from typing import Pattern, Match, List, Tuple
 
 
 type Version = int
@@ -43,7 +44,7 @@ any filename with a version number in place of the '%V'. Also converts any
 pattern
     @param pattern: The given 'pattern'
 """
-def pat_to_regex(pattern: str) -> str:
+def pat_to_regex(pattern: str) -> Pattern:
     new_pattern: str = ""
     is_escaped: bool = False
     for char in pattern:
@@ -56,10 +57,10 @@ def pat_to_regex(pattern: str) -> str:
                 new_pattern += r"(\d+)"
                 continue
         if char == ".":
-            new_pattern += r"\\."
+            new_pattern += r"\."
             continue
         new_pattern += char
-    return new_pattern
+    return re.compile(new_pattern)
 
 """
 Gets the names & versions of all the product files in the current working 
@@ -70,8 +71,8 @@ first on the list)
     @return A list, whose entries are tuples of the form
         (filename, product version of filename)
 """
-def get_versions(regex) -> Product:
-    match: Match
+def get_versions(regex: Pattern) -> Product:
+    match: Match[str] | None
     versions: Product = []
     for filename in os.listdir():
         match = regex.fullmatch(filename)
