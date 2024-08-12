@@ -2,6 +2,7 @@ import phase
 import os
 from pathlib import Path
 
+PROJ_ROOT = os.getcwd()
 DATA_DIR = "./test-data"
 
 
@@ -10,27 +11,78 @@ def main():
     seed()
     print("All tests passed!")
 
-def seed():
-    os.chdir(DATA_DIR)
-    for file in os.listdir("."):
-        os.system("rm -r "+file)
-    for i in range(1,6):
-        Path(f"boring_stuff_v{i}.ods").touch(exist_ok=False)
-        Path(f"boring_padded_v{i:03}.ods").touch(exist_ok=False)
-        Path(f"boring_offset_v{i+10}.ods").touch(exist_ok=False)
-    for i in range(1,21):
-        Path(f"interesting_stuff_v{i}.pdf").touch(exist_ok=False)
-        Path(f"interesting_padded_v{i:03}.pdf").touch(exist_ok=False)
-        Path(f"sometimes_padded_v{i:02}.pdf").touch(exist_ok=False)
-    for i in range(1,12):
-        Path(f"fascinating_stuff_v{i}").touch(exist_ok=False)
-        Path(f"fascinating_padded_v{i:03}").touch(exist_ok=False)
-    for i in range(1,21):
-        os.mkdir(f"interesting_dir_v{i}")
-    Path("dud").touch(exist_ok=False)
-    Path("oring_stuff_1.ods").touch(exist_ok=False)
-    Path("boring_stuff_v1Xods").touch(exist_ok=False)
-    Path("boring_stuffv1Xods").touch(exist_ok=False)
+
+class Example():
+    def __init__(self,comment,config_file,regex,seed_files,product_files):
+        self.comment = comment
+        self.config_file = config_file
+        self.regex = regex
+        self.seed_files = seed_files
+        self.product_files = product_files
+    
+    def seed(self):
+        os.chdir(DATA_DIR)
+        os.system("rm -r ./*")
+        for filename in self.seed_files:
+            Path(filename).touch(exist_ok=False)
+
+examples = [
+    Example(
+        comment = "nothing needs to be done",
+        config_file = """
+        pattern = "boring_stuff_v%V.ods"
+        limit = 11
+        """,
+        regex = r"boring_stuff_v(\d+)\.ods",
+        seed_files = [f"boring_stuff_v{i}.ods" for i in range(1,6)] +
+            ["dud", "oring_stuff_v1.ods", "boring_stuff_v5Xods"],
+        product_files = [(f"boring_stuff_v{i}.ods",i) for i in range(5,0,-1)],
+    ),
+    Example(
+        comment = "nothing + zero-padding",
+        config_file = """
+        pattern = "boring_stuff_v%V.ods"
+        limit = 11
+        """,
+        regex = r"boring_stuff_v(\d+)\.ods",
+        seed_files = [f"boring_stuff_v{i:02}.ods" for i in range(1,6)] +
+            ["dud", "oring_stuff_v1.ods", "boring_stuff_v5Xods"],
+        product_files = [(f"boring_stuff_v{i}.ods",i) for i in range(5,0,-1)],
+    ),
+    Example(
+        comment = "nothing + offset",
+        config_file = """
+        pattern = "boring_offset_v%V.ods"
+        limit = 11
+        """,
+        regex = r"boring_stuff_v(\d+)\.ods",
+        seed_files = [f"boring_stuff_v{i}.ods" for i in range(50,56)] +
+            ["dud", "oring_stuff_v1.ods", "boring_stuff_v5Xods"],
+        product_files = [(f"boring_stuff_v{i}.ods",i) for i in range(55,49,-1)],
+    ),
+    Example(
+        comment = "some files need to be removed",
+        config_file = """
+        pattern = "curious_stuff_v%V.ods"
+        limit = 11
+        """,
+        regex = r"curious_stuff_v(\d+)\.ods",
+        seed_files = [f"curious_stuff_v{i}.ods" for i in range(1,21)],
+        product_files = [f"curious_stuff_v{i}.ods" for i in range(20,9,-1)],
+    ),
+    Example(
+        comment = "there are exactly right number of versions",
+        config_file = """
+        pattern = "fascinating_stuff_v%V.ods"
+        limit = 11
+        """,
+        regex = r"fascinating_stuff_v(\d+)\.ods",
+        seed_files =
+            [f"fascinating_stuff_v{i:02}.ods" for i in range(1,12)],
+        product_files = [f"fascinating_stuff_v{i}.ods" for i in range(11,0)],
+    ),
+]
+
 
 def pat_to_regex_test() -> bool:
     examples = {
