@@ -2,38 +2,52 @@
 
 
 TEST_DIR=$(pwd)
-DATA_DIR="./test-data"
+DATA_DIR="test-data"
  
+if [ "$(basename $TEST_DIR)" != 'test' ]
+then
+	echo "seed is being run from the wrong directory!"
+	exit 1
+fi
+
+
 function main {
-	open_latest_num_no_pad
+	case $1 in
+		seed) seed;;
+		*) echo "no e2e tests yet!";
+	esac
 }
 
-function open_latest_num_no_pad {
-	# seed data directory
-	cd $DATA_DIR
-    for i in $(seq 5)
+function seed {
+	cd ./$DATA_DIR
+	# just to double check
+	if [ "$(basename $PWD)" = "$DATA_DIR" ]
+	then
+		rm -r ./*
+	fi
+	for i in $(seq 5)
 	do
 		touch "boring_stuff_v$i.ods"
+		touch $(printf "boring_padded_v%03d.ods" $i)
 	done
-	cat <<- EOF > $DATA_DIR/.phase
-	pattern = "boring_stuff_v%V.ods"
-	EOF
-	cd $TEST_DIR
-	../phase $DATA_DIR
+	for i in $(seq 20)
+    do
+		touch "interesting_stuff_v$i.pdf"
+		touch $(printf "interesting_padded_v%03d.pdf" $i)
+	done
+	for i in $(seq 11)
+    do
+		touch "fascinating_stuff_v$i"
+		touch $(printf "fascinating_padding_v%03d.pdf" $i)
+	done
+	for i in $(seq 20)
+    do
+		mkdir "interesting_directory_v$i"
+	done
+	touch "dud"
+	touch "oring_stuff_v1.ods"
+	touch "boring_stuff_v1Xods"
 }
 
-function clean_num_no_pad {
-	# seed data directory
-	cd $DATA_DIR
-    for i in $(seq 5)
-	do
-		touch "boring_stuff_v$i.ods"
-	done
-	cat <<- EOF > $DATA_DIR/.phase
-	pattern = "boring_stuff_v%V.ods"
-	EOF
-	cd $TEST_DIR
-	../phase $DATA_DIR
-}
 
-main
+main $@
