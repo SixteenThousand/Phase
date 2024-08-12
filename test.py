@@ -14,8 +14,6 @@ def main():
     print("All tests passed!")
 
 
-
-
 def pat_to_regex_test() -> bool:
     examples = {
         "boring_stuff_v%V.txt": re.compile(r"boring_stuff_v(\d+)\.txt"),
@@ -32,7 +30,6 @@ def pat_to_regex_test() -> bool:
     return True
 
 def get_versions_test() -> bool:
-    os.chdir(DATA_DIR)
     examples = [
         {
             "comment": "no padding",
@@ -53,6 +50,7 @@ def get_versions_test() -> bool:
                 [(f"boring_stuff_v{i:02}.ods",i) for i in range(5,0,-1)],
         },
     ]
+    os.chdir(DATA_DIR)
     for example in examples:
         # re-seed DATA_DIR
         os.system(f"rm -r {DATA_DIR}/*")
@@ -65,7 +63,59 @@ def get_versions_test() -> bool:
             print(f"    exp: {pprint.pformat(example["product_files"])}")
             return False
     return True
-    
+
+def clean_test() -> bool:
+    os.chdir(DATA_DIR)
+    ex_regex = re.compile(r"thingy-ma-jig_v(\d+)\.pdf")
+    ex_filename_prefix = "thingy-ma-jig_v"
+    ex_filename_suffix = ".pdf"
+    ex_limit = 11
+    ex_nonmatching_filenames = [
+        "dud",
+        "thingy_ma_jig_v9.pdf",
+        "thingy-ma-jig_v.pdf",
+        "thingy-ma-jig_v3Xpdf",
+    ]
+    examples = [
+        {
+            "comment": "do nothing",
+            "seed":
+                [ex_filename_prefix+str(i)+ex_filename_suffix
+                     for i in range(1,6)] + ex_nonmatching_filenames,
+            "expected":
+                [ex_filename_prefix+str(i)+ex_filename_suffix
+                     for i in range(1,6)] + ex_nonmatching_filenames,
+        },
+        {
+            "comment": "get rid of the earliest versions",
+            "seed":
+                [ex_filename_prefix+str(i)+ex_filename_suffix
+                    for i in range(1,21)] + ex_nonmatching_filenames,
+            "expected":
+                [ex_filename_prefix+str(i)+ex_filename_prefix
+                    for i in range(10,21)],
+        },
+        {
+            "comment": "offset",
+            "seed":
+                [ex_filename_prefix+str(i)+ex_filename_suffix
+                    for i in range(45,60)] + ex_nonmatching_filenames,
+            "expected":
+                [ex_filename_prefix+str(i)+ex_filename_prefix
+                    for i in range(49,60)],
+        },
+        {
+            "comment": "exactly at the limit!",
+            "seed":
+                [ex_filename_prefix+str(i)+ex_filename_suffix
+                 for i in range(1,12)] + ex_nonmatching_filenames,
+            "expected":
+                [ex_filename_prefix+str(i)+ex_filename_suffix
+                    for i in range(1,12)],
+        },
+    ]
+                
+            
 
 
 if __name__ == "__main__": main()
