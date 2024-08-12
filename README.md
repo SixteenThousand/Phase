@@ -36,3 +36,10 @@ Options are:
  - number.max: maximum no. of versions to be kept at any one time does 
    nothing if type == datetime
  - datetime.earliest: the earliest date to be kept at any one time.
+ 
+ ---
+ 
+ ## Dependencies
+ 
+ - python >=3.6
+    - due to 'import Pattern from typing'
