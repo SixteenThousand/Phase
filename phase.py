@@ -30,7 +30,7 @@ def main():
     global config
     with open("./.phase","rb") as fp:
         config = tomllib.load(fp)
-    versions: Product = get_product_versions(pat_to_regex(config["pattern"]))
+    versions: Product = get_versions(pat_to_regex(config["pattern"]))
     for i in range(config["max"],len(versions)):
         os.system("rm -r "+versions[i][0])
     os.system("xdg-open "+versions[0][0])
@@ -70,7 +70,7 @@ first on the list)
     @return A list, whose entries are tuples of the form
         (filename, product version of filename)
 """
-def get_product_versions(regex) -> Product:
+def get_versions(regex) -> Product:
     match: Match
     versions: Product = []
     for filename in os.listdir():
