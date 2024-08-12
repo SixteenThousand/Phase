@@ -31,7 +31,6 @@ def main():
     with open("./.phase","rb") as fp:
         config = tomllib.load(fp)
     versions: Product = get_product_versions(pat_to_regex(config["pattern"]))
-    versions.sort(key=lambda product_file: product_file[1], reverse=True)
     for i in range(config["max"],len(versions)):
         os.system("rm -r "+versions[i][0])
     os.system("xdg-open "+versions[0][0])
@@ -64,11 +63,12 @@ def pat_to_regex(pattern: str) -> str:
 
 """
 Gets the names & versions of all the product files in the current working 
-directory.
+directory, sorted in reverse order of versions (so the latest version is
+first on the list)
     @param regex: The regular expression used to identify product files,
         i.e. the output of pat_to_regex
-    @return A dictionary with filenames as keys and version numbers as 
-        values
+    @return A list, whose entries are tuples of the form
+        (filename, product version of filename)
 """
 def get_product_versions(regex) -> Product:
     match: Match
@@ -78,6 +78,7 @@ def get_product_versions(regex) -> Product:
         if  match == None:
             continue
         versions.append( (filename, int(match.group(1))) )
+    versions.sort(key=lambda product_file: product_file[1], reverse=True)
     return versions
 
 
