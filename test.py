@@ -11,6 +11,7 @@ DATA_DIR = PROJ_ROOT + "/test-data"
 def main():
     assert pat_to_regex_test()
     assert get_versions_test()
+    assert clean_test()
     print("All tests passed!")
 
 
@@ -101,25 +102,25 @@ def clean_test() -> bool:
     examples = [
         {
             "comment": "do nothing",
-            "versions": [(ex_filename(i),i) for i in range(1,6)],
+            "versions": [(ex_filename(i),i) for i in range(5,0,-1)],
             "expected": [ex_filename(i) for i in range(1,6)] +
                 ex_nonmatching_filenames,
         },
         {
             "comment": "get rid of the earliest versions",
-            "versions": [(ex_filename(i),i) for i in range(1,21)],
+            "versions": [(ex_filename(i),i) for i in range(20,0,-1)],
             "expected": [ex_filename(i) for i in range(10,21)] +
                 ex_nonmatching_filenames,
         },
         {
             "comment": "offset",
-            "versions": [(ex_filename(i),i) for i in range(45,60)],
+            "versions": [(ex_filename(i),i) for i in range(59,44,-1)],
             "expected": [ex_filename(i) for i in range(49,60)] +
                 ex_nonmatching_filenames,
         },
         {
             "comment": "exactly at the limit!",
-            "versions": [(ex_filename(i),i) for i in range(1,12)],
+            "versions": [(ex_filename(i),i) for i in range(11,0,-1)],
             "expected": [ex_filename(i) for i in range(1,12)] +
                 ex_nonmatching_filenames,
         },
@@ -138,7 +139,7 @@ def clean_test() -> bool:
         expected_dir_contents =  sorted(example["expected"])
         actual_dir_contents = sorted(os.listdir()) 
         if actual_dir_contents != expected_dir_contents:
-            print("Fail:")
+            print(f"Fail: {example["comment"]}")
             print(f"  got: {pprint.pformat(actual_dir_contents)}")
             print(f"  exp: {pprint.pformat(expected_dir_contents)}")
             return False
