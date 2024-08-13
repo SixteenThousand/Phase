@@ -34,6 +34,7 @@ def get_versions_test() -> bool:
         {
             "comment": "no padding",
             "regex": re.compile(r"boring_stuff_v(\d+)\.ods"),
+            "seed_dirs": [],
             "seed_files":
                 [f"boring_stuff_v{i}.ods" for i in range(1,6)] +
                 ["dud", "oring_stuff_v1.ods", "boring_stuff_v5Xods"],
@@ -43,6 +44,7 @@ def get_versions_test() -> bool:
         {
             "comment": "zero-padding",
             "regex": re.compile(r"boring_stuff_v(\d+)\.ods"),
+            "seed_dirs": [],
             "seed_files":
                 [f"boring_stuff_v{i:02}.ods" for i in range(1,6)] +
                 ["dud", "oring_stuff_v1.ods", "boring_stuff_v5Xods"],
@@ -53,10 +55,19 @@ def get_versions_test() -> bool:
             "comment": "product is a directory",
             "regex": re.compile(r"boring_dir_v(\d+)"),
             "seed_dirs":
-                [f"boring_stuff_v{i}" for i in range(1,13)] +
+                [f"boring_dir_v{i}" for i in range(1,13)] +
                     ["dud_dir","boring_dir_vd"],
+            "seed_files": [],
             "product_files":
                 [(f"boring_dir_v{i}",i) for i in range(12,0,-1)],
+        },
+        {
+            "comment": "product is a directory or a file",
+            "regex": re.compile(r"project_thing_v(\d+)"),
+            "seed_dirs": [f"project_thing_v{i}" for i in range(1,5)],
+            "seed_files": [f"project_thing_v{i}" for i in range(5,10)],
+            "product_files":
+                [(f"project_thing_v{i}",i) for i in range(9,0,-1)],
         },
     ]
     os.chdir(DATA_DIR)
@@ -92,25 +103,25 @@ def clean_test() -> bool:
             "comment": "do nothing",
             "versions": [(ex_filename(i),i) for i in range(1,6)],
             "expected": [ex_filename(i) for i in range(1,6)] +
-                    ex_nonmatching_filenames,
+                ex_nonmatching_filenames,
         },
         {
             "comment": "get rid of the earliest versions",
             "versions": [(ex_filename(i),i) for i in range(1,21)],
             "expected": [ex_filename(i) for i in range(10,21)] +
-                    ex_nonmatching_filenames,
+                ex_nonmatching_filenames,
         },
         {
             "comment": "offset",
             "versions": [(ex_filename(i),i) for i in range(45,60)],
             "expected": [ex_filename(i) for i in range(49,60)] +
-                    ex_nonmatching_filenames,
+                ex_nonmatching_filenames,
         },
         {
             "comment": "exactly at the limit!",
             "versions": [(ex_filename(i),i) for i in range(1,12)],
             "expected": [ex_filename(i) for i in range(1,12)] +
-                    ex_nonmatching_filenames,
+                ex_nonmatching_filenames,
         },
     ]
     os.chdir(DATA_DIR)
