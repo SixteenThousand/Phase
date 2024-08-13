@@ -65,7 +65,6 @@ def get_versions_test() -> bool:
     return True
 
 def clean_test() -> bool:
-    os.chdir(DATA_DIR)
     ex_regex = re.compile(r"thingy-ma-jig_v(\d+)\.pdf")
     ex_filename_prefix = "thingy-ma-jig_v"
     ex_filename_suffix = ".pdf"
@@ -76,45 +75,53 @@ def clean_test() -> bool:
         "thingy-ma-jig_v.pdf",
         "thingy-ma-jig_v3Xpdf",
     ]
+    def ex_filename(version: phase.Version):
+        return f"{ex_filename_prefix}{version}{ex_filename_suffix}"
     examples = [
         {
             "comment": "do nothing",
-            "seed":
-                [ex_filename_prefix+str(i)+ex_filename_suffix
-                     for i in range(1,6)] + ex_nonmatching_filenames,
-            "expected":
-                [ex_filename_prefix+str(i)+ex_filename_suffix
-                     for i in range(1,6)] + ex_nonmatching_filenames,
+            "versions": [(ex_filename(i),i) for i in range(1,6)],
+            "expected": [ex_filename(i) for i in range(1,6)] +
+                    ex_nonmatching_filenames,
         },
         {
             "comment": "get rid of the earliest versions",
-            "seed":
-                [ex_filename_prefix+str(i)+ex_filename_suffix
-                    for i in range(1,21)] + ex_nonmatching_filenames,
-            "expected":
-                [ex_filename_prefix+str(i)+ex_filename_prefix
-                    for i in range(10,21)],
+            "versions": [(ex_filename(i),i) for i in range(1,21)],
+            "expected": [ex_filename(i) for i in range(10,21)] +
+                    ex_nonmatching_filenames,
         },
         {
             "comment": "offset",
-            "seed":
-                [ex_filename_prefix+str(i)+ex_filename_suffix
-                    for i in range(45,60)] + ex_nonmatching_filenames,
-            "expected":
-                [ex_filename_prefix+str(i)+ex_filename_prefix
-                    for i in range(49,60)],
+            "versions": [(ex_filename(i),i) for i in range(45,60)],
+            "expected": [ex_filename(i) for i in range(49,60)] +
+                    ex_nonmatching_filenames,
         },
         {
             "comment": "exactly at the limit!",
-            "seed":
-                [ex_filename_prefix+str(i)+ex_filename_suffix
-                 for i in range(1,12)] + ex_nonmatching_filenames,
-            "expected":
-                [ex_filename_prefix+str(i)+ex_filename_suffix
-                    for i in range(1,12)],
+            "versions": [(ex_filename(i),i) for i in range(1,12)],
+            "expected": [ex_filename(i) for i in range(1,12)] +
+                    ex_nonmatching_filenames,
         },
     ]
-                
+    os.chdir(DATA_DIR)
+    for example in examples:
+        # remove files from previous tests
+        os.system("rm -r ./*")
+        # seed DATA_DIR with product files
+        for version in example["versions"]:
+            Path(version[0]).touch(exist_ok=False)
+        # seed DATA_DIR with files phase should not touch
+        for filename in ex_nonmatching_filenames:
+            Path(filename).touch(exist_ok=False)
+        phase.clean(example["versions"],ex_limit)
+        expected_dir_contents =  sorted(example["expected"])
+        actual_dir_contents = sorted(os.listdir()) 
+        if actual_dir_contents != expected_dir_contents:
+            print("Fail:")
+            print(f"  got: {pprint.pformat(actual_dir_contents)}")
+            print(f"  exp: {pprint.pformat(expected_dir_contents)}")
+            return False
+    return True
             
 
 
