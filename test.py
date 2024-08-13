@@ -49,6 +49,15 @@ def get_versions_test() -> bool:
             "product_files":
                 [(f"boring_stuff_v{i:02}.ods",i) for i in range(5,0,-1)],
         },
+        {
+            "comment": "product is a directory",
+            "regex": re.compile(r"boring_dir_v(\d+)"),
+            "seed_dirs":
+                [f"boring_stuff_v{i}" for i in range(1,13)] +
+                    ["dud_dir","boring_dir_vd"],
+            "product_files":
+                [(f"boring_dir_v{i}",i) for i in range(12,0,-1)],
+        },
     ]
     os.chdir(DATA_DIR)
     for example in examples:
@@ -56,6 +65,8 @@ def get_versions_test() -> bool:
         os.system(f"rm -r {DATA_DIR}/*")
         for filename in example["seed_files"]:
             Path(filename).touch(exist_ok=False)
+        for dirname in example["seed_dirs"]:
+            os.mkdir(dirname)
         result = phase.get_versions(example["regex"])
         if result != example["product_files"]:
             print(f"Fail: {example["comment"]}")
@@ -65,7 +76,6 @@ def get_versions_test() -> bool:
     return True
 
 def clean_test() -> bool:
-    ex_regex = re.compile(r"thingy-ma-jig_v(\d+)\.pdf")
     ex_filename_prefix = "thingy-ma-jig_v"
     ex_filename_suffix = ".pdf"
     ex_limit = 11
@@ -106,7 +116,7 @@ def clean_test() -> bool:
     os.chdir(DATA_DIR)
     for example in examples:
         # remove files from previous tests
-        os.system("rm -r ./*")
+        os.system(f"rm -r {DATA_DIR}/*")
         # seed DATA_DIR with product files
         for version in example["versions"]:
             Path(version[0]).touch(exist_ok=False)
