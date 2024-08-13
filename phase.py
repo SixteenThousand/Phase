@@ -32,8 +32,7 @@ def main():
     with open("./.phase","rb") as fp:
         config = tomllib.load(fp)
     versions: Product = get_versions(pat_to_regex(config["pattern"]))
-    for i in range(config["max"],len(versions)):
-        os.system("rm -r "+versions[i][0])
+    clean(versions,config["limit"])
     os.system("xdg-open "+versions[0][0])
 
 
@@ -81,6 +80,17 @@ def get_versions(regex: Pattern) -> Product:
         versions.append( (filename, int(match.group(1))) )
     versions.sort(key=lambda product_file: product_file[1], reverse=True)
     return versions
+
+"""
+Deletes the oldest versions of the product until only a given number are
+left.
+    @param versions: The filenames of the various product versions, paired
+        with their respective versions. The output of get_versions
+    @param limit: The number of versions to leave behind
+"""
+def clean(versions: Product, limit: int):
+    for i in range(limit,len(versions)):
+        os.remove(versions[i][0])
 
 
 if __name__ == "__main__": main()

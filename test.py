@@ -143,7 +143,6 @@ def clean_test() -> bool:
             print(f"  exp: {pprint.pformat(expected_dir_contents)}")
             return False
     return True
-            
 
 
 if __name__ == "__main__": main()
