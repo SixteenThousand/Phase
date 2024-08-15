@@ -12,6 +12,7 @@ def main():
     assert pat_to_regex_test()
     assert get_versions_test()
     assert clean_test()
+    assert backup_sample_test()
     print("All tests passed!")
 
 
@@ -143,6 +144,24 @@ def clean_test() -> bool:
             print(f"  got: {pprint.pformat(actual_dir_contents)}")
             print(f"  exp: {pprint.pformat(expected_dir_contents)}")
             return False
+    return True
+
+def backup_sample_test() -> bool:
+    ex_versions = [(f"some_thing_v{i}.pdf",i) for i in range(20,6,-1)]
+    ex_expected = [(f"some_thing_v{i}.pdf",i) for i in [10,15,20]]
+    ex_dst = "./regular_backups"
+    os.system(f"rm -r {DATA_DIR}/*")
+    os.chdir(DATA_DIR)
+    os.mkdir(ex_dst)
+    for version in ex_versions:
+        Path(version[0]).touch(exist_ok=False)
+    phase.backup_sample(ex_versions,5,ex_dst)
+    result = sorted(os.listdir(ex_dst)) 
+    if result != ex_expected:
+        print("Fail: backups gone wrong")
+        print(f"  got: {pprint.pformat(result)}")
+        print(f"  exp: {pprint.pformat(ex_expected)}")
+        return False
     return True
 
 
