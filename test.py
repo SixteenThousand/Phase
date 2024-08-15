@@ -148,7 +148,7 @@ def clean_test() -> bool:
 
 def backup_sample_test() -> bool:
     ex_versions = [(f"some_thing_v{i}.pdf",i) for i in range(20,6,-1)]
-    ex_expected = [(f"some_thing_v{i}.pdf",i) for i in [10,15,20]]
+    ex_expected = [f"some_thing_v{i}.pdf" for i in [10,15,20]]
     ex_dst = "./regular_backups"
     os.system(f"rm -r {DATA_DIR}/*")
     os.chdir(DATA_DIR)

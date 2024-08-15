@@ -92,5 +92,18 @@ def clean(versions: Product, limit: int):
     for i in range(limit,len(versions)):
         os.remove(versions[i][0])
 
+"""
+Selects every nth version of the product and copies it to a given
+destination. "nth version" here means that the *version number* is divisble
+by n.
+    @param versions: The versions of the product; the output of get_versions
+    @param freq: The value of n
+    @param dst: The destination path
+"""
+def backup_sample(versions: Product, freq: int, dst: str):
+    for version in versions:
+        if version[1] % freq == 0:
+            shutil.copy2(version[0],dst)
+
 
 if __name__ == "__main__": main()
