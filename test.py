@@ -126,6 +126,12 @@ def clean_test() -> bool:
             "expected": [ex_filename(i) for i in range(1,12)] +
                 ex_nonmatching_filenames,
         },
+        {
+            "comment": "clean a sample backup directory",
+            "versions": [(ex_filename(5*i),5*i) for i in range(15,0,-1)],
+            "expected": [ex_filename(5*i) for i in range(5,16)] +
+                ex_nonmatching_filenames,
+        },
     ]
     os.chdir(DATA_DIR)
     for example in examples:
