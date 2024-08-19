@@ -93,7 +93,7 @@ def clean_test() -> bool:
     ex_filename_prefix: str = "thingy-ma-jig_v"
     ex_filename_suffix: str = ".pdf"
     ex_limit: int = 11
-    ex_nonmatching_filenames = [
+    ex_nonmatching_filenames: List[str] = [
         "dud",
         "thingy_ma_jig_v9.pdf",
         "thingy-ma-jig_v.pdf",
