@@ -22,18 +22,30 @@ def main():
     parser.add_argument(
         "product_path",
         nargs="?",
-        default="."
+        default=os.getcwd()
     )
     args = parser.parse_args()
-    # go to the product directory
+    # start actually doing things
     os.chdir(args.product_path)
     # load product configration
     global config
     with open("./.phase","rb") as fp:
         config = tomllib.load(fp)
-    versions: Product = get_versions(pat_to_regex(config["pattern"]))
+    config["regex"] = pat_to_regex(config["pattern"])
+    versions: Product = get_versions(config["regex"])
+    # make backups
+    backup_sample(
+        versions,
+        config["backup"]["sample"]["frequency"],
+        config["backup"]["sample"]["destination"]
+    )
+    # clean up old versions, both in the main directory and also in the backup
     clean(versions,config["limit"])
-    os.system("xdg-open "+versions[0][0])
+    os.chdir(config["backup"]["sample"]["destination"])
+    clean(get_versions(config["regex"]),config["backup"]["sample"]["limit"])
+    os.chdir(args.product_path)
+    # open the latest version of the product
+    os.system(f"xdg-open {versions[0][0]} & disown")
 
 
 """
@@ -83,7 +95,7 @@ def get_versions(regex: Pattern) -> Product:
 
 """
 Deletes the oldest versions of the product until only a given number are
-left.
+left. Must be run from within the directory of the files you wish to delete
     @param versions: The filenames of the various product versions, paired
         with their respective versions. The output of get_versions
     @param limit: The number of versions to leave behind
