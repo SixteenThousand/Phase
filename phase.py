@@ -25,6 +25,7 @@ def main():
         default=os.getcwd()
     )
     args = parser.parse_args()
+    args.product_path = os.path.abspath(args.product_path)
     # start actually doing things
     os.chdir(args.product_path)
     # load product configration
