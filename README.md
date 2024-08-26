@@ -43,7 +43,3 @@ Options are:
  
  - python >=3.6
     - due to 'import Pattern from typing'
-
-### Development Dependencies
-
- - tree (likely installed on any UN*X system)
