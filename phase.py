@@ -46,7 +46,7 @@ def main():
     clean(get_versions(config["regex"]),config["backup"]["sample"]["limit"])
     os.chdir(args.product_path)
     # open the latest version of the product
-    os.system(f"xdg-open {versions[0][0]} & disown")
+    os.system(f"xdg-open {versions[0][0]}")
 
 
 """
