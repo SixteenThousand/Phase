@@ -3,7 +3,7 @@
 import os
 import shutil
 import re
-import argparse
+import sys
 import tomllib
 from typing import Pattern, Match, List, Tuple, Any
 
@@ -11,39 +11,45 @@ from typing import Pattern, Match, List, Tuple, Any
 type Version = int
 type Product = List[Tuple[str,Version]]
 
+# Represents the options specified at the commandline by user, after being 
+# parsed
+class Flags():
+    def __init__(self):
+        self.only_open = False
+        self.product_path = os.getcwd()
 
 def main():
-    # parse command line flags
-    parser = argparse.ArgumentParser(
-        description = "phase, v0.1\nA tool for dumb file versioning",
-        usage = "",
-        epilog = ""
-    )
-    parser.add_argument(
-        "product_path",
-        nargs="?",
-        default=os.getcwd()
-    )
-    args = parser.parse_args()
-    args.product_path = os.path.abspath(args.product_path)
+    flags = Flags()
+    for arg in sys.argv:
+        if arg == "-h" or arg == "--help":
+            print(
+                """
+                Phase, v0.3
+                """
+            )
+            exit()
+        if arg == "-o" or arg == "--only-open":
+            flags.only_open = True
+    flags.product_path = os.path.abspath(flags.product_path)
     # start actually doing things
-    os.chdir(args.product_path)
+    os.chdir(flags.product_path)
     # load product configration
     global config
     with open("./.phase","rb") as fp:
         config = tomllib.load(fp)
     config["regex"] = pat_to_regex(config["pattern"])
     versions: Product = get_versions(config["regex"])
-    # make backups
-    backup_sample(
-        versions,
-        config["regex"],
-        config["backup"]["sample"],
-    )
-    # clean up old versions, both in the main directory and also in the backup
-    clean(versions,config["limit"])
-    # open the latest version of the product
-    os.system(f"xdg-open {versions[0][0]}")
+    if not flags.only_open:
+        # make backups
+        backup_sample(
+            versions,
+            config["regex"],
+            config["backup"]["sample"],
+        )
+        # clean up old versions, both in the main directory and also in the backup
+        clean(versions,config["limit"])
+        # open the latest version of the product
+        os.system(f"xdg-open {versions[0][0]}")
 
 
 """
