@@ -5,7 +5,7 @@ import shutil
 import re
 import argparse
 import tomllib
-from typing import Pattern, Match, List, Tuple
+from typing import Pattern, Match, List, Tuple, Any
 
 
 type Version = int
@@ -37,14 +37,11 @@ def main():
     # make backups
     backup_sample(
         versions,
-        config["backup"]["sample"]["frequency"],
-        config["backup"]["sample"]["destination"]
+        config["regex"],
+        config["backup"]["sample"],
     )
     # clean up old versions, both in the main directory and also in the backup
     clean(versions,config["limit"])
-    os.chdir(config["backup"]["sample"]["destination"])
-    clean(get_versions(config["regex"]),config["backup"]["sample"]["limit"])
-    os.chdir(args.product_path)
     # open the latest version of the product
     os.system(f"xdg-open {versions[0][0]}")
 
@@ -108,15 +105,24 @@ def clean(versions: Product, limit: int):
 """
 Selects every nth version of the product and copies it to a given
 destination. "nth version" here means that the *version number* is divisble
-by n.
+by n. Also deletes older versions in copies directory until only a given 
+number are left, using the clean function.
     @param versions: The versions of the product; the output of get_versions
-    @param freq: The value of n
-    @param dst: The destination path
+    @param regex: the regex used to identify a product file
+    @param config: the section of the configuration used for sample backups.
+        It has the following values:
+            destination: the given directory above
+            frequency: the value of n
+            limit: the maximum number of backups to leave behind
 """
-def backup_sample(versions: Product, freq: int, dst: str):
+def backup_sample(versions: Product, regex: Pattern, config: dict[str,Any]):
     for version in versions:
-        if version[1] % freq == 0:
-            shutil.copy2(version[0],dst)
+        if version[1] % config["frequency"] == 0:
+            shutil.copy2(version[0],config["destination"])
+    orig_dir: str = os.getcwd()
+    os.chdir(config["destination"])
+    clean(get_versions(regex),config["limit"])
+    os.chdir(orig_dir)
 
 
 if __name__ == "__main__": main()
