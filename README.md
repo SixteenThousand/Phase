@@ -70,8 +70,9 @@ Just make backups of the product.
 - `--all` runs a given shell command which should make a copy of the entire 
   directory somewhere (ideally to some remote source, possibly using 
   [rclone](rclone.org)).
-- `-release` makes a copy of only the latest version, and adds a 
-  date-time-stamp to the filename.
+- `--release` makes a copy of only the latest version, and adds a 
+  date-time-stamp to the filename, the format of which can be specified in 
+  the config file (see [Configuration](#configuration)).
 
 ### `phase release`
 
@@ -84,10 +85,12 @@ Adds a date-time-stamp to `FILE`, using the format `TIME_FORMAT`.
 - `%y` => year
 - `%m` => month
 - `%d` => day (of month)
-- `%H` => hour
+- `%H` => hour (using a 24-hour clock)
 - `%M` => minute
 - `%S` => second^2
 Time & date information will use the system locale.
+Note this is the only phase option that has nothing to do with a 
+version-managed product.
 
 ### `phase desktop [--add|--remove] [PRODUCT_PATH]`
 
@@ -116,20 +119,56 @@ version.
 
 ## Configuration
 
+Exactly *how* phase operates on a particular product is determined by a file 
+named `.phase` in the product directory. An example of a `.phase` file is 
+given below. Note that the file is in [toml](https://toml.io/en/) format.
+```
+# The pattern phase uses to identify product files; the %V represents where 
+# the version number will go.
+pattern = 'LS13_And-It-Goes-On_v%V.ods'
 
-Options are:
- - type: datetime | number
- - [backup]: shell commands to be used to backup the product to some 
-   external services
-    - backup.all.cmd: backup the entire directory
-    - backup.current: backup the current version. Should accept a path 
-      argument.
-    - backup.sample.cmd: backup every Nth version, where N is set by the 
-      frequency options
-    - backup.regular.version_frequency
- - number.max: maximum no. of versions to be kept at any one time does 
-   nothing if type == datetime
- - datetime.earliest: the earliest date to be kept at any one time.
+# The maximum number of versions phase should leave behind when cleaning up 
+# old versions. So in this case, if versions 23-35 were present, then phase 
+# would delete versions 23 & 24 so that only the latest 11 versions are
+# left.
+limit = 11
+
+
+
+[backup]
+# The configuration used when running phase backup --sample or in the backup 
+# stage when running phase with no arguments.
+[backup.sample]
+
+# The frequency of backups; so in this case versions 5,10,15,... will get 
+# backed up if present.
+frequency = 5
+
+# The place to put the backup files.
+destination = "./Regular_Back-ups"
+
+# The number of sample backups to leave when cleaning up; works similarly to 
+# the other limit option.
+limit = 10
+
+
+# The configuration used when running phase backup --release or phase
+# release.
+[backup.release]
+
+# The date-time format used when adding a date to the filename. See the 
+# documentation for 'phase date' (under #Usage) for definitions of the %x 
+# codes.
+format = '%y%m%d-%H%M%S'
+
+# The place to put the copy of the latest version.
+destination = './Deep Storage'
+
+
+[backup.all]
+# The shell command run when using 'phase backup --all'.
+cmd = 'rclone sync . GoogleDriveRemote:/directory/in/my/google/drive'
+ ```
  
 ---
  
