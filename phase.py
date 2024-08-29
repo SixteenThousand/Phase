@@ -36,7 +36,6 @@ def main():
     # start actually doing things
     os.chdir(flags.product_path)
     # load product configration
-    global config
     with open("./.phase","rb") as fp:
         config = tomllib.load(fp)
     config["regex"] = pat_to_regex(config["pattern"])
