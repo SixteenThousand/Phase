@@ -24,7 +24,7 @@ phase init [PRODUCT_PATH]
 phase config [PRODUCT_PATH]
 phase backup [--sample | --all | --release]
 phase release
-phase date [[-t|--time][=TIME_FORMAT]] FILE
+phase date [[-f|--format][=STAMP_FORMAT]] FILE
 phase desktop [--add|--remove] [PRODUCT_PATH]
 ```
 
@@ -78,10 +78,10 @@ Just make backups of the product.
 
 An alias for `phase backup --release`.
 
-### `phase date [[-t|--time][=TIME_FORMAT]] FILE`
+### `phase date [[-f|--format][=STAMP_FORMAT]] FILE`
 
-Adds a date-time-stamp to `FILE`, using the format `TIME_FORMAT`. 
-`TIME_FORMAT` uses the following codes:
+Adds a date-time-stamp to `FILE`, using the format `STAMP_FORMAT`. 
+`STAMP_FORMAT` uses the following codes:
 - `%y` => year
 - `%m` => month
 - `%d` => day (of month)
@@ -186,7 +186,7 @@ cmd = 'rclone sync . GoogleDriveRemote:/directory/in/my/google/drive'
 - [x] phase [-o|--only-open] [PRODUCT_PATH]
 - [ ] phase backup [--sample | --all | --release]
 - [ ] phase release
-- [ ] phase date [[-t|--time][=TIME_FORMAT]] FILE
+- [ ] phase date [[-f|--format][=STAMP_FORMAT]] FILE
 - [ ] phase desktop [--add|--remove] [PRODUCT_PATH]
 - [ ] phase init [PRODUCT_PATH]
 - [ ] phase config [PRODUCT_PATH]
@@ -196,7 +196,7 @@ cmd = 'rclone sync . GoogleDriveRemote:/directory/in/my/google/drive'
 These features may never be added, but are here for future reference should 
 I find some spare time for them:
 - Allow phase to put date-time-stamps anywhere in the file name, possibly by 
-  changing how the TIME_FORMAT variable works.
+  changing how the STAMP_FORMAT variable works.
 
 ---
 
