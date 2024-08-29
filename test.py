@@ -154,22 +154,54 @@ def clean_test() -> bool:
     return True
 
 def backup_sample_test() -> bool:
+    # set up a test case
     ex_versions: List[Tuple[str,phase.Version]] = [
-        (f"some_thing_v{i}.pdf",i) for i in range(20,6,-1)
+        (f"some_thing_v{i}.pdf",i) for i in range(111,96,-1)
     ]
-    ex_expected: List[str] = [f"some_thing_v{i}.pdf" for i in [10,15,20]]
-    ex_dst: str = "./regular_backups"
+    ex_regex: Pattern = re.compile(r"some_thing_v(\d+)\.pdf")
+    ex_backup_names: List[str] = [f"some_thing_v{i*5}.pdf" for i in range(3,20)]
+    ex_backup_sample_config = {
+        "frequency": 5,
+        "destination": "./regular_backups",
+        "limit": 10,
+    }
+    # expected files to be left in the sample backups directory
+    ex_backups_expected: List[str] = sorted(
+        [f"some_thing_v{i*5}.pdf" for i in range(22,12,-1)]
+    )
+    # expected files to be left in the main directory
+    ex_main_expected: List[str] = sorted(
+        [version[0] for version in ex_versions] +
+            [ex_backup_sample_config["destination"][2:]]
+    )
+    # seed DATA_DIR accordingly
     os.system(f"rm -r {DATA_DIR}/*")
     os.chdir(DATA_DIR)
-    os.mkdir(ex_dst)
+    os.mkdir(ex_backup_sample_config["destination"])
     for version in ex_versions:
         Path(version[0]).touch(exist_ok=False)
-    phase.backup_sample(ex_versions,5,ex_dst)
-    result: List[str] = sorted(os.listdir(ex_dst)) 
-    if result != ex_expected:
+    for backup_name in ex_backup_names:
+        Path(
+            f"{ex_backup_sample_config["destination"]}/{backup_name}"
+        ).touch(exist_ok=False)
+    # run the function
+    phase.backup_sample(ex_versions,ex_regex,ex_backup_sample_config)
+    # check we have got the right backups & that the backups directory has 
+    # been cleaned correctly
+    backups_result: List[str] = sorted(
+        os.listdir(ex_backup_sample_config["destination"])
+    )
+    if backups_result != ex_backups_expected:
         print("Fail: backups gone wrong")
-        print(f"  got: {pprint.pformat(result)}")
-        print(f"  exp: {pprint.pformat(ex_expected)}")
+        print(f"  got: {pprint.pformat(backups_result)}")
+        print(f"  exp: {pprint.pformat(ex_backups_expected)}")
+        return False
+    # check that nothing has been changed in the main product directory
+    main_result: List[str] = sorted(os.listdir("."))
+    if main_result != ex_main_expected:
+        print("Fail: sample backups changes main versions")
+        print(f"    got: {pprint.pformat(main_result)}")
+        print(f"    exp: {pprint.pformat(ex_main_expected)}")
         return False
     return True
 
