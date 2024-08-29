@@ -49,7 +49,7 @@ def main():
         # clean up old versions, both in the main directory and also in the backup
         clean(versions,config["limit"])
         # open the latest version of the product
-        os.system(f"xdg-open {versions[0][0]}")
+    os.system(f"xdg-open {versions[0][0]} &")
 
 
 """
