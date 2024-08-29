@@ -88,9 +88,17 @@ Adds a date-time-stamp to `FILE`, using the format `TIME_FORMAT`.
 - `%H` => hour (using a 24-hour clock)
 - `%M` => minute
 - `%S` => second^2
-Time & date information will use the system locale.
+Time & date information will use the system locale. The date-time-stamp will 
+be added to the file name just before the file extension, if any.
 Note this is the only phase option that has nothing to do with a 
 version-managed product.
+
+#### Examples
+
+- `phase date -t='%y-%m-%d' something.pdf` will rename 'something.pdf' to 
+  'something_2024-08-29.pdf'
+- `phase date -t='%m%d' something.otherthing.pdf` will rename 
+  'something.otherthing.pdf' to 'something_0829.otherthing.pdf'
 
 ### `phase desktop [--add|--remove] [PRODUCT_PATH]`
 
@@ -175,13 +183,20 @@ cmd = 'rclone sync . GoogleDriveRemote:/directory/in/my/google/drive'
 ## Development Roadmap
 
 - [x] phase [PRODUCT_PATH]
-- [ ] phase [-o|--only-open] [PRODUCT_PATH]
+- [x] phase [-o|--only-open] [PRODUCT_PATH]
 - [ ] phase backup [--sample | --all | --release]
 - [ ] phase release
 - [ ] phase date [[-t|--time][=TIME_FORMAT]] FILE
 - [ ] phase desktop [--add|--remove] [PRODUCT_PATH]
 - [ ] phase init [PRODUCT_PATH]
 - [ ] phase config [PRODUCT_PATH]
+
+### Development Wishlist
+
+These features may never be added, but are here for future reference should 
+I find some spare time for them:
+- Allow phase to put date-time-stamps anywhere in the file name, possibly by 
+  changing how the TIME_FORMAT variable works.
 
 ---
 
