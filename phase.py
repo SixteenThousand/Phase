@@ -20,7 +20,7 @@ class Flags():
 
 def main():
     flags = Flags()
-    for arg in sys.argv:
+    for arg in sys.argv[1:]:
         if arg == "-h" or arg == "--help":
             print(
                 """
@@ -30,6 +30,8 @@ def main():
             exit()
         if arg == "-o" or arg == "--only-open":
             flags.only_open = True
+        if arg[0] != '-':
+            flags.product_path = arg
     flags.product_path = os.path.abspath(flags.product_path)
     # start actually doing things
     os.chdir(flags.product_path)
