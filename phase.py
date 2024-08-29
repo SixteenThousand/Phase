@@ -17,40 +17,48 @@ class Flags():
     def __init__(self):
         self.only_open = False
         self.product_path = os.getcwd()
+        self.stamp_format = "%y%m%d-%H%M%S"
 
 def main():
     flags = Flags()
-    for arg in sys.argv[1:]:
+    for arg in sys.argv[2:]:
         if arg == "-h" or arg == "--help":
             print(
                 """
-                Phase, v0.3
+                Phase, v0.4
                 """
             )
             exit()
         if arg == "-o" or arg == "--only-open":
             flags.only_open = True
+        if arg.startswith("-f") or arg.startswith("--format"):
+            flags.stamp_format = arg.partition("=")[2]
         if arg[0] != '-':
             flags.product_path = arg
-    flags.product_path = os.path.abspath(flags.product_path)
-    # start actually doing things
-    os.chdir(flags.product_path)
-    # load product configration
-    with open("./.phase","rb") as fp:
-        config = tomllib.load(fp)
-    config["regex"] = pat_to_regex(config["pattern"])
-    versions: Product = get_versions(config["regex"])
-    if not flags.only_open:
-        # make backups
-        backup_sample(
-            versions,
-            config["regex"],
-            config["backup"]["sample"],
-        )
-        # clean up old versions, both in the main directory and also in the backup
-        clean(versions,config["limit"])
-        # open the latest version of the product
-    os.system(f"xdg-open {versions[0][0]} &")
+    match sys.argv[1]:
+        case "date":
+            pass
+        case _:
+            flags.product_path = os.path.abspath(flags.product_path)
+            # start actually doing things
+            os.chdir(flags.product_path)
+            # load product configration
+            with open("./.phase","rb") as fp:
+                config = tomllib.load(fp)
+            config["regex"] = pat_to_regex(config["pattern"])
+            versions: Product = get_versions(config["regex"])
+            if not flags.only_open:
+                # make backups
+                backup_sample(
+                    versions,
+                    config["regex"],
+                    config["backup"]["sample"],
+                )
+                # clean up old versions, both in the main directory and also 
+                # in the backup
+                clean(versions,config["limit"])
+                # open the latest version of the product
+            os.system(f"xdg-open {versions[0][0]} &")
 
 
 """
