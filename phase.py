@@ -15,9 +15,9 @@ type Product = List[Tuple[str,Version]]
 # parsed
 class Flags():
     def __init__(self):
-        self.only_open = False
-        self.product_path = os.getcwd()
-        self.stamp_format = "%y%m%d-%H%M%S"
+        self.only_open: bool = False
+        self.product_path: str = os.getcwd()
+        self.stamp_format: str = "%y%m%d-%H%M%S"
 
 def main():
     flags = Flags()
