@@ -14,6 +14,7 @@ def main():
     assert get_versions_test()
     assert clean_test()
     assert backup_sample_test()
+    assert flagparse_test()
     print("All tests passed!")
 
 
@@ -209,88 +210,75 @@ def flagparse_test() -> bool:
     has_not_erred: bool = True
     def new_flags(attrs: dict[str,Any]):
         res = phase.Flags()
-        for key,val in attrs:
+        for key,val in attrs.items():
             setattr(res,key,val)
         return res
     tcases: List[Tuple[List[str],phase.Flags]] = [
         (
-            [""],
+            [],
+            new_flags({})
+        ),
+        (
+            ["-o"],
             new_flags({
-                "command": "default",
-                "help": False,
-                "only_open": False,
-                "product_path": "",
-                "stamp_format": "%y%m%d-%H%M%S",
+                "only_open": True,
             })
         ),
         (
-            [""],
+            ["--only-open"],
             new_flags({
-                "command": "default",
-                "help": False,
-                "only_open": False,
-                "product_path": "",
-                "stamp_format": "%y%m%d-%H%M%S",
+                "only_open": True,
             })
         ),
         (
-            [""],
+            ["-o","/home/username/Documents/Important-Thing"],
             new_flags({
-                "command": "default",
-                "help": False,
-                "only_open": False,
-                "product_path": "",
-                "stamp_format": "%y%m%d-%H%M%S",
+                "only_open": True,
+                "product_path": "/home/username/Documents/Important-Thing",
             })
         ),
         (
-            [""],
+            ["/home/username/Documents/Important-Thing","-o"],
             new_flags({
-                "command": "default",
-                "help": False,
-                "only_open": False,
-                "product_path": "",
-                "stamp_format": "%y%m%d-%H%M%S",
+                "only_open": True,
+                "product_path": "/home/username/Documents/Important-Thing",
             })
         ),
         (
-            [""],
+            ["date","-f=%y-%m-%d %H:%M:%S"],
             new_flags({
-                "command": "default",
-                "help": False,
-                "only_open": False,
-                "product_path": "",
-                "stamp_format": "%y%m%d-%H%M%S",
+                "command": "date",
+                "stamp_format": "%y-%m-%d %H:%M:%S",
             })
         ),
         (
-            [""],
+            ["date","--format=%y-%m-%d %H:%M:%S"],
             new_flags({
-                "command": "default",
-                "help": False,
-                "only_open": False,
-                "product_path": "",
-                "stamp_format": "%y%m%d-%H%M%S",
+                "command": "date",
+                "stamp_format": "%y-%m-%d %H:%M:%S",
             })
         ),
         (
-            [""],
+            ["-h"],
             new_flags({
-                "command": "default",
-                "help": False,
-                "only_open": False,
-                "product_path": "",
-                "stamp_format": "%y%m%d-%H%M%S",
+                "command": "help",
+            })
+        ),
+        (
+            ["--help"],
+            new_flags({
+                "command": "help",
             })
         ),
     ]
     for tcase in tcases:
-        got = phase.flagparse(tcase[0])
-        if got != tcase[1]:
-            print("Fail: flagparse went kaput")
-            print("     arg: {tcase.join(" ")}") 
-            print(f"    got: {pprint.pformat(got)}")
-            print(f"    exp: {pprint.pformat(tcase[1])}")
+        got: phase.Flags = phase.flagparse(["phase"] + tcase[0])
+        if got.__dict__ != tcase[1].__dict__:
+            print("Fail: flagparse went kaput >>")
+            print(f"    arg: {" ".join(tcase[0])}") 
+            print(f"    got: {pprint.pformat(got.__dict__)}")
+            print(f"    exp: {pprint.pformat(tcase[1].__dict__)}")
+            print("<<")
             has_not_erred = False
     return has_not_erred
 
