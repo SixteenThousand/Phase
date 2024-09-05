@@ -205,5 +205,94 @@ def backup_sample_test() -> bool:
         return False
     return True
 
+def flagparse_test() -> bool:
+    has_not_erred: bool = True
+    def new_flags(attrs: dict[str,Any]):
+        res = phase.Flags()
+        for key,val in attrs:
+            setattr(res,key,val)
+        return res
+    tcases: List[Tuple[List[str],phase.Flags]] = [
+        (
+            [""],
+            new_flags({
+                "command": "default",
+                "help": False,
+                "only_open": False,
+                "product_path": "",
+                "stamp_format": "%y%m%d-%H%M%S",
+            })
+        ),
+        (
+            [""],
+            new_flags({
+                "command": "default",
+                "help": False,
+                "only_open": False,
+                "product_path": "",
+                "stamp_format": "%y%m%d-%H%M%S",
+            })
+        ),
+        (
+            [""],
+            new_flags({
+                "command": "default",
+                "help": False,
+                "only_open": False,
+                "product_path": "",
+                "stamp_format": "%y%m%d-%H%M%S",
+            })
+        ),
+        (
+            [""],
+            new_flags({
+                "command": "default",
+                "help": False,
+                "only_open": False,
+                "product_path": "",
+                "stamp_format": "%y%m%d-%H%M%S",
+            })
+        ),
+        (
+            [""],
+            new_flags({
+                "command": "default",
+                "help": False,
+                "only_open": False,
+                "product_path": "",
+                "stamp_format": "%y%m%d-%H%M%S",
+            })
+        ),
+        (
+            [""],
+            new_flags({
+                "command": "default",
+                "help": False,
+                "only_open": False,
+                "product_path": "",
+                "stamp_format": "%y%m%d-%H%M%S",
+            })
+        ),
+        (
+            [""],
+            new_flags({
+                "command": "default",
+                "help": False,
+                "only_open": False,
+                "product_path": "",
+                "stamp_format": "%y%m%d-%H%M%S",
+            })
+        ),
+    ]
+    for tcase in tcases:
+        got = phase.flagparse(tcase[0])
+        if got != tcase[1]:
+            print("Fail: flagparse went kaput")
+            print("     arg: {tcase.join(" ")}") 
+            print(f"    got: {pprint.pformat(got)}")
+            print(f"    exp: {pprint.pformat(tcase[1])}")
+            has_not_erred = False
+    return has_not_erred
+
 
 if __name__ == "__main__": main()
