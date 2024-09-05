@@ -22,8 +22,8 @@ phase [PRODUCT_PATH]
 phase [-o|--only-open] [PRODUCT_PATH]
 phase init [PRODUCT_PATH]
 phase config [PRODUCT_PATH]
-phase backup [--sample | --all | --release]
-phase release
+phase backup [--sample | --all | --release] [PRODUCT_PATH]
+phase release [PRODUCT_PATH]
 phase date [[-f|--format][=STAMP_FORMAT]] FILE
 phase desktop [--add|--remove] [PRODUCT_PATH]
 ```
@@ -62,7 +62,7 @@ Phase will also prompt the user to create a desktop entry file^1
 
 An alias for `phase init` (see above).
 
-### `phase backup [--sample | --all | --release]`
+### `phase backup [--sample | --all | --release] [PRODUCT_PATH]`
 
 Just make backups of the product.
 - `--sample` does the same backing up as is done whern running phase with no 
@@ -74,7 +74,7 @@ Just make backups of the product.
   date-time-stamp to the filename, the format of which can be specified in 
   the config file (see [Configuration](#configuration)).
 
-### `phase release`
+### `phase release [PRODUCT_PATH]`
 
 An alias for `phase backup --release`.
 
