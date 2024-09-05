@@ -15,27 +15,18 @@ type Product = List[Tuple[str,Version]]
 # parsed
 class Flags():
     def __init__(self):
+        self.command: str = "default"
+        self.help: bool = False
         self.only_open: bool = False
         self.product_path: str = os.getcwd()
         self.stamp_format: str = "%y%m%d-%H%M%S"
-
+    
 def main():
-    flags = Flags()
-    for arg in sys.argv[2:]:
-        if arg == "-h" or arg == "--help":
-            print(
-                """
-                Phase, v0.4
-                """
-            )
-            exit()
-        if arg == "-o" or arg == "--only-open":
-            flags.only_open = True
-        if arg.startswith("-f") or arg.startswith("--format"):
-            flags.stamp_format = arg.partition("=")[2]
-        if arg[0] != '-':
-            flags.product_path = arg
-    match sys.argv[1]:
+    flags = flagparse(sys.argv)
+    if flags.help:
+        print("Phase, v0.4\nThe Best Worst Version Control")
+        exit()
+    match flags.command:
         case "date":
             pass
         case _:
@@ -60,6 +51,26 @@ def main():
                 # open the latest version of the product
             os.system(f"xdg-open {versions[0][0]} &")
 
+
+"""
+Parses the arguments passed at the command line into a Flags object.
+"""
+def flagparse(argv) -> Flags:
+    flags = Flags()
+    if argv[1] == "-o" or argv[1] == "--only-open":
+        flags.only_open = True
+    else:
+        flags.command = argv[1]
+    for arg in argv[2:]:
+        if arg == "-h" or arg == "--help":
+            flags.help = True
+        if arg == "-o" or arg == "--only-open":
+            flags.only_open = True
+        if arg.startswith("-f") or arg.startswith("--format"):
+            flags.stamp_format = arg.partition("=")[2]
+        if arg[0] != '-':
+            flags.product_path = arg
+    return flags
 
 """
 Converts a 'pattern' with a '%V' in it to a regular expression that matches
