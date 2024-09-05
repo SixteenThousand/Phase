@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import pprint
 from typing import List, Tuple, Any, Pattern
+from datetime import datetime
 
 PROJ_ROOT = os.getcwd()
 DATA_DIR = PROJ_ROOT + "/test-data"
@@ -285,31 +286,32 @@ def flagparse_test() -> bool:
 
 def date_test() -> bool:
     has_not_erred: bool = True
+    tcases_now: datetime = datetime(2024,9,7,21,7,8)
     tcases: List[dict[str,Any]] = [
         {
-            "input": ("some_file","_%y%m%d-%H%M%S"),
+            "input": ("some_file","_%y%m%d-%H%M%S",tcases_now),
             "seed": ["some_file"],
-            "expected": re.compile(r"some_file_\d{8}-\d{6}"),
+            "expected": "some_file_20240907-210708",
         },
         {
-            "input": ("some_file_v23","_%y%m%d-%H%M%S"),
+            "input": ("some_file_v23","_%y%m%d-%H%M%S",tcases_now),
             "seed": ["some_file_v23","some_file_v22","some_file_v24"],
-            "expected": re.compile(r"some_file_v23_\d{8}-\d{6}"),
+            "expected": "some_file_v23_20240907-210708",
         },
         {
-            "input": ("some_file_v34.pdf","_%y%m%d-%H%M%S"),
+            "input": ("some_file_v34.pdf","_%y%m%d-%H%M%S",tcases_now),
             "seed": ["some_file_v34.pdf","some_file_v33.pdf","some_file_v35.pdf"],
-            "expected": re.compile(r"some_file_v34_\d{8}-\d{6}\.pdf"),
+            "expected": "some_file_v34_20240907-210708.pdf",
         },
         {
-            "input": ("./some_file_v56.ods","_%y%m%d-%H%M%S"),
-            "seed": ["some_file_file_v56.ods"],
-            "expected": re.compile(r"some_file_v56_\d{8}-\d{6}.ods"),
+            "input": ("./some_file_v56.ods","_%y%m%d-%H%M%S",tcases_now),
+            "seed": ["some_file_v56.ods"],
+            "expected": "some_file_v56_20240907-210708.ods",
         },
         {
-            "input": ("./some_file_v56.ods","-%H%S__%y--%m"),
-            "seed": ["some_file_file_v56.ods"],
-            "expected": re.compile(r"some_file_v56-\d{4}__\d{4}--\d{2}"),
+            "input": ("./some_file_v56.ods","-%H%S__%y--%m",tcases_now),
+            "seed": ["some_file_v56.ods"],
+            "expected": "some_file_v56-2108__2024--09.ods",
         },
     ]
     os.chdir(DATA_DIR)
@@ -322,7 +324,7 @@ def date_test() -> bool:
         got_dircontents.sort()
         exp_dircontents: List[str] = tcase["seed"] + [new_file]
         exp_dircontents.sort()
-        if (not tcase["expected"].fullmatch(new_file) or
+        if (tcase["expected"] != new_file  or
                 got_dircontents != exp_dircontents):
             print("Fail: dating went wrong! >>")
             print(f"    arg: {pprint.pformat(tcase["input"])}")
@@ -332,8 +334,12 @@ def date_test() -> bool:
     os.system(f"rm -r {DATA_DIR}/*")
     os.mkdir("some_directory")
     Path("./some_directory/some_file").touch(exist_ok=False)
-    new_file = phase.date("./some_directory/some_file","_%y%m%d-%H%M%S")
-    if not re.fullmatch(r"./some_directory/some_file_\d{8}-\d{4}",new_file):
+    new_file = phase.date(
+        "./some_directory/some_file",
+        "_%y%m%d-%H%M%S",
+        tcases_now
+    )
+    if new_file != "./some_directory/some_file_20240907-210708":
         print("Fail: dating naming went wrong when path used")
     if (os.listdir() != ["some_directory"] or
             os.listdir("some_directory") != [new_file]):
