@@ -247,14 +247,14 @@ def flagparse_test() -> bool:
         (
             ["date","-f=%y-%m-%d %H:%M:%S"],
             new_flags({
-                "command": phase.Command.DATE,
+                "action": phase.Action.DATE,
                 "stamp_format": "%y-%m-%d %H:%M:%S",
             })
         ),
         (
             ["date","--format=%y-%m-%d %H:%M:%S"],
             new_flags({
-                "command": phase.Command.DATE,
+                "action": phase.Action.DATE,
                 "stamp_format": "%y-%m-%d %H:%M:%S",
             })
         ),

@@ -15,7 +15,7 @@ type Product = List[Tuple[str,Version]]
 # Represents main action for phase to take; default is to open the atest
 # version & do clean-up
 @unique
-class Command(Enum):
+class Action(Enum):
     DEFAULT = "default"
     DATE = "date"
 
@@ -23,7 +23,7 @@ class Command(Enum):
 # parsed
 class Flags():
     def __init__(self):
-        self.command: Command = Command.DEFAULT
+        self.action: Action = Action.DEFAULT
         self.help: bool = False
         self.only_open: bool = False
         self.product_path: str = os.getcwd()
@@ -34,7 +34,7 @@ def main():
     if flags.help:
         print("Phase, v0.4\nThe Best Worst Version Control")
         exit()
-    match flags.command:
+    match flags.action:
         case "date":
             pass
         case _:
@@ -76,7 +76,7 @@ def flagparse(argv: List[str]) -> Flags:
             flags.stamp_format = arg.partition("=")[2]
         if arg[0] != '-':
             if  num_positional_args == 0:
-                try: flags.command = Command(arg)
+                try: flags.action = Action(arg)
                 except ValueError: flags.product_path = arg
             else:
                 flags.product_path = arg
