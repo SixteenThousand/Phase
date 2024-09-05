@@ -282,5 +282,31 @@ def flagparse_test() -> bool:
             has_not_erred = False
     return has_not_erred
 
+def date_test() -> bool:
+    tcases: List[dict[str,Any]] = [
+        {
+            "input": ("some_file","_%y%m%d-%H%M%S"),
+            "seed": ["some_file"],
+            "expected": re.compile(r"some_file_\d{8}-\d{6}"),
+        },
+        {
+            "input": ("some_file_v23","_%y%m%d-%H%M%S"),
+            "seed": ["some_file"],
+            "expected": re.compile(r"some_file_v23_\d{8}-\d{6}"),
+        },
+        {
+            "input": ("some_file_v34.pdf","_%y%m%d-%H%M%S"),
+            "seed": ["some_file"],
+            "expected": re.compile(r"some_file_v34_\d{8}-\d{6}\.pdf"),
+        },
+        {
+            "input": ("./some_directory/some_file","_%y%m%d-%H%M%S"),
+            "seed": ["some_file"],
+            "expected": re.compile(r"some_file_\d{8}-\d{6}"),
+        },
+    ]
+    os.chdir(DATA_DIR)
+    for tcase in tcases:
+
 
 if __name__ == "__main__": main()
