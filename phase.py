@@ -6,16 +6,24 @@ import re
 import sys
 import tomllib
 from typing import Pattern, Match, List, Tuple, Any
+from enum import Enum, unique
 
 
 type Version = int
 type Product = List[Tuple[str,Version]]
 
+# Represents main action for phase to take; default is to open the atest
+# version & do clean-up
+@unique
+class Command(Enum):
+    DEFAULT = "default"
+    DATE = "date"
+
 # Represents the options specified at the commandline by user, after being 
 # parsed
 class Flags():
     def __init__(self):
-        self.command: str = "default"
+        self.command: Command = Command.DEFAULT
         self.help: bool = False
         self.only_open: bool = False
         self.product_path: str = os.getcwd()
@@ -55,13 +63,11 @@ def main():
 """
 Parses the arguments passed at the command line into a Flags object.
 """
-def flagparse(argv) -> Flags:
+def flagparse(argv: List[str]) -> Flags:
     flags = Flags()
-    if argv[1] == "-o" or argv[1] == "--only-open":
-        flags.only_open = True
-    else:
-        flags.command = argv[1]
-    for arg in argv[2:]:
+    if len(argv) == 1: return flags
+    num_positional_args: int = 0
+    for arg in argv[1:]:
         if arg == "-h" or arg == "--help":
             flags.help = True
         if arg == "-o" or arg == "--only-open":
@@ -69,7 +75,12 @@ def flagparse(argv) -> Flags:
         if arg.startswith("-f") or arg.startswith("--format"):
             flags.stamp_format = arg.partition("=")[2]
         if arg[0] != '-':
-            flags.product_path = arg
+            if  num_positional_args == 0:
+                try: flags.command = Command(arg)
+                except ValueError: flags.product_path = arg
+            else:
+                flags.product_path = arg
+            num_positional_args += 1
     return flags
 
 """
