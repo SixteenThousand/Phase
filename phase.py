@@ -9,6 +9,8 @@ from typing import Pattern, Match, List, Tuple, Any, Union, TextIO
 from enum import Enum
 import enum
 from datetime import datetime
+import textwrap
+import string
 
 
 type Version = int
@@ -271,8 +273,15 @@ def prompt(question: str) -> str:
     return input()
 
 def add_desktop_file(product_path: str):
-    app_name: str = prompt("What do want the application to be called?")
+    app_name: str = prompt(
+        "What do want the application to be called? " + \
+            "(puncuation is not allowed)"
+    )
     desktop_filename: str = app_name.lower().replace(" ","-")
+    for char in string.punctuation:
+        if desktop_filename.find(char) >= 0:
+            print("Do not put punctuation in the app name!")
+            return
     description: str = prompt("Description (one line)")
     only_open: bool = \
         prompt("Skip cleaning when opening the app? (y/n)") == "y"
@@ -281,15 +290,24 @@ def add_desktop_file(product_path: str):
         "w",
         encoding="utf8"
     )
-    desktop_file.write(
-        f"""
+    desktop_file.write( f"""
         [Desktop Entry]
         Name={app_name}
         GenericName={description}
         Exec=phase {"--only-open " if only_open else ""}{product_path}
         Type=Application
-        """
+    """)
+    desktop_file.close()
+    config_file: TextIO = open(
+        f"{product_path}/.phase",
+        "a",
+        encoding="utf8"
     )
+    config_file.write( textwrap.dedent(f"""
+        [desktop]
+        location = "~/.local/share/applications/{desktop_filename}.desktop"
+    """))
+    config_file.close()
 
 
 if __name__ == "__main__": main()
