@@ -257,14 +257,14 @@ class TestFlagparse(ut.TestCase):
                 })
             },
             {
-                "input": ["date","-f=%Y-%m-%d %H:%M:%S"],
+                "input": ["date","-f","%Y-%m-%d %H:%M:%S"],
                 "expected": TestFlagparse.new_flags({
                     "action": phase.Action.DATE,
                     "stamp_format": "%Y-%m-%d %H:%M:%S",
                 })
             },
             {
-                "input": ["date","--format=%Y-%m-%d %H:%M:%S"],
+                "input": ["date","--format","%Y-%m-%d %H:%M:%S"],
                 "expected": TestFlagparse.new_flags({
                     "action": phase.Action.DATE,
                     "stamp_format": "%Y-%m-%d %H:%M:%S",
@@ -281,6 +281,13 @@ class TestFlagparse(ut.TestCase):
                 "expected": TestFlagparse.new_flags({
                     "help": True,
                 })
+            },
+            {
+                "input": ["date","-d","/path/to/some/directory"],
+                "expected": TestFlagparse.new_flags({
+                    "action": phase.Action.DATE,
+                    "output_dir": "/path/to/some/directory",
+                }),
             },
         ]
         for tcase in tcases:
