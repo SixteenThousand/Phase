@@ -28,7 +28,8 @@ class Flags():
         self.help: bool = False
         self.only_open: bool = False
         self.product_path: str = os.getcwd()
-        self.stamp_format: str = "%y%m%d-%H%M%S"
+        self.stamp_format: str = "%Y%m%d-%H%M%S"
+        self.output_dir: str = os.getcwd()
     
 def main():
     flags = flagparse(sys.argv)
@@ -40,7 +41,7 @@ def main():
             new_name: str = date(
                 flags.product_path,
                 flags.stamp_format,
-                datetime.now()
+                dst=flags.output_dir
             )
             print(f"{flags.product_path} -> {new_name}")
         case _:
@@ -73,20 +74,28 @@ def flagparse(argv: List[str]) -> Flags:
     flags = Flags()
     if len(argv) == 1: return flags
     num_positional_args: int = 0
-    for arg in argv[1:]:
-        if arg == "-h" or arg == "--help":
+    i: int = 1
+    while i < len(argv):
+        if argv[i] == "-h" or argv[i] == "--help":
             flags.help = True
-        if arg == "-o" or arg == "--only-open":
+        if argv[i] == "-o" or argv[i] == "--only-open":
             flags.only_open = True
-        if arg.startswith("-f") or arg.startswith("--format"):
-            flags.stamp_format = arg.partition("=")[2]
-        if arg[0] != '-':
+        if argv[i] == "-d" or argv[i] == "--output-directory":
+            flags.output_dir = argv[i+1]
+            i += 2
+            continue
+        if argv[i] == "-f" or argv[i] == "--format":
+            flags.stamp_format = argv[i+1]
+            i += 2
+            continue
+        if argv[i][0] != '-':
             if  num_positional_args == 0:
-                try: flags.action = Action(arg)
-                except ValueError: flags.product_path = arg
+                try: flags.action = Action(argv[i])
+                except ValueError: flags.product_path = argv[i]
             else:
-                flags.product_path = arg
+                flags.product_path = argv[i]
             num_positional_args += 1
+        i += 1
     return flags
 
 """
