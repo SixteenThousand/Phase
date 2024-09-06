@@ -179,7 +179,12 @@ Note that the stamp is added before the last extension, i.e. before the last
         pwd.
     @return: The new (absolute) file path.
 """
-def date(file: str, format: str, now: datetime, dst: str="?") -> str:
+def date(
+        file: str,
+        format: str,
+        now: datetime=datetime.now(),
+        dst: str="?"
+) -> str:
     if dst == "?":
         dst = os.path.dirname(file)
     dst = os.path.abspath(dst)  # note this removes any '/' at the end
