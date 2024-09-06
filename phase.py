@@ -21,12 +21,13 @@ class Action(Enum):
     DEFAULT = "default"
     DATE = "date"
     BACKUP = "backup"
+    RELEASE = "release"
 
 @enum.unique
 class BackupAction(Enum):
-    ALL = enum.auto()
-    RELEASE = enum.auto()
-    SAMPLE = enum.auto()
+    ALL = "--all"
+    RELEASE = "--release"
+    SAMPLE = "--sample"
 
 # Represents the options specified at the commandline by user, after being 
 # parsed
@@ -38,7 +39,7 @@ class Flags():
         self.product_path: str = os.getcwd()
         self.stamp_format: str = "%Y%m%d-%H%M%S"
         self.output_dir: str = os.getcwd()
-        self.backup_action = BackupAction.SAMPLE
+        self.backup_action: BackupAction = BackupAction.SAMPLE
     
 def main():
     flags = flagparse(sys.argv)
@@ -82,26 +83,33 @@ def flagparse(argv: List[str]) -> Flags:
     num_positional_args: int = 0
     i: int = 1
     while i < len(argv):
-        if argv[i] == "-h" or argv[i] == "--help":
-            flags.help = True
-        if argv[i] == "-o" or argv[i] == "--only-open":
-            flags.only_open = True
-        if argv[i] == "-d" or argv[i] == "--output-directory":
-            flags.output_dir = argv[i+1]
-            i += 2
-            continue
-        if argv[i] == "-f" or argv[i] == "--format":
-            flags.stamp_format = argv[i+1]
-            i += 2
-            continue
         if argv[i][0] != '-':
-            if  num_positional_args == 0:
+            if num_positional_args == 0:
                 try: flags.action = Action(argv[i])
                 except ValueError: flags.product_path = argv[i]
             else:
                 flags.product_path = argv[i]
             num_positional_args += 1
+        elif argv[i] == "-h" or argv[i] == "--help":
+            flags.help = True
+        elif argv[i] == "-o" or argv[i] == "--only-open":
+            flags.only_open = True
+        elif argv[i] == "-d" or argv[i] == "--output-directory":
+            flags.output_dir = argv[i+1]
+            i += 1
+        elif argv[i] == "-f" or argv[i] == "--format":
+            flags.stamp_format = argv[i+1]
+            i += 2
+            continue
+        else:
+            match flags.action:
+                case Action.BACKUP:
+                    try: flags.backup_action = BackupAction(argv[i])
+                    except ValueError: pass
         i += 1
+    if flags.action == Action.RELEASE:
+        flags.action = Action.BACKUP
+        flags.backup_action = BackupAction.RELEASE
     return flags
 
 """
