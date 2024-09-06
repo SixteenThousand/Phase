@@ -308,7 +308,60 @@ class TestFlagparse(ut.TestCase):
             },
         ]
         self.do_cases(tcases)
-    
+
+    def test_backup(self):
+        tcases: List[dict[str,Any]] = [
+            {
+                "input": ["backup","--sample"],
+                "expected": TestFlagparse.new_flags({
+                    "action": phase.Action.BACKUP,
+                    "backup_type": phase.BackupAction.SAMPLE,
+                })
+            },
+            {
+                "input": ["backup","--release","/some/path"],
+                "expected": TestFlagparse.new_flags({
+                    "action": phase.Action.BACKUP,
+                    "backup_type": phase.BackupAction.RELEASE,
+                    "product_path": "/some/path",
+                })
+            },
+            {
+                "input": [
+                    "backup",
+                    "--release",
+                    "--output-directory",
+                    "/other/path",
+                    "/some/path"
+                ],
+                "expected": TestFlagparse.new_flags({
+                    "action": phase.Action.BACKUP,
+                    "backup_type": phase.BackupAction.RELEASE,
+                    "product_path": "/some/path",
+                    "output_dir": "/other/path",
+                })
+            },
+            {
+                "input": ["release"],
+                "expected": TestFlagparse.new_flags({
+                    "action": phase.Action.BACKUP,
+                    "backup_type": phase.BackupAction.RELEASE,
+                })
+            },
+            {
+                "input": [
+                    "release","/some/path","--output-directory","/other/path"
+                ],
+                "expected": TestFlagparse.new_flags({
+                    "action": phase.Action.BACKUP,
+                    "backup_type": phase.BackupAction.RELEASE,
+                    "product_path": "/some/path",
+                    "output_dir": "/other/path",
+                })
+            },
+        ]
+        self.do_cases(tcases)
+
 
 class TestDate(ut.TestCase):
     default_datetime: datetime = datetime(2024,9,7,21,7,8)
