@@ -5,7 +5,7 @@ import shutil
 import re
 import sys
 import tomllib
-from typing import Pattern, Match, List, Tuple, Any, Union
+from typing import Pattern, Match, List, Tuple, Any, Union, TextIO
 from enum import Enum
 import enum
 from datetime import datetime
@@ -249,6 +249,34 @@ def date(
         new_file = f"{dst}/{basename[:ext_index]}{format}{basename[ext_index:]}"
     shutil.copy2(file,new_file)
     return new_file
+
+"""
+Prompts the user with a given question and returns their answer.
+"""
+def prompt(question: str) -> Any:
+    print(f"{question}: ")
+    return input
+
+def add_desktop_file(product_path: str):
+    app_name: str = prompt("What do want the application to be called?")
+    desktop_filename: str = app_name.lower().replace(" ","-")
+    description: str = prompt("Description (one line)")
+    only_open: bool = \
+        prompt("Skip cleaning when opening the app? (y/n)") == "y"
+    desktop_file: TextIO = open(
+        f"{os.getenv("HOME")}/.local/share/applications/{desktop_filename}.desktop",
+        "w",
+        encoding="utf8"
+    )
+    desktop_file.write(
+        f"""
+        [Desktop Entry]
+        Name={app_name}
+        GenericName={description}
+        Exec=phase {"--only-open " if only_open else ""}{product_path}
+        Type=Application
+        """
+    )
 
 
 if __name__ == "__main__": main()
