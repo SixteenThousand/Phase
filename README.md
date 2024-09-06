@@ -185,13 +185,13 @@ cmd = 'rclone sync . GoogleDriveRemote:/directory/in/my/google/drive'
 ## Development Roadmap
 
 - [x] phase [PRODUCT_PATH]
-- [x] phase [-o|--only-open] [PRODUCT_PATH]
-- [ ] phase backup [--sample | --all | --release]
+- [x] phase [-o|--only-open]
+- [ ] phase backup
 - [ ] phase release
-- [ ] phase date [[-f|--format][=STAMP_FORMAT]] FILE
-- [ ] phase desktop [--add|--remove] [PRODUCT_PATH]
-- [ ] phase init [PRODUCT_PATH]
-- [ ] phase config [PRODUCT_PATH]
+- [x] phase date
+- [ ] phase desktop
+- [ ] phase init
+- [ ] phase config
 
 ### Development Wishlist
 
