@@ -306,12 +306,12 @@ def date_test() -> bool:
         {
             "input": ("./some_file_v56.ods","_%y%m%d-%H%M%S",tcases_now),
             "seed": ["some_file_v56.ods"],
-            "expected": "some_file_v56_20240907-210708.ods",
+            "expected": "./some_file_v56_20240907-210708.ods",
         },
         {
             "input": ("./some_file_v56.ods","-%H%S__%y--%m",tcases_now),
             "seed": ["some_file_v56.ods"],
-            "expected": "some_file_v56-2108__2024--09.ods",
+            "expected": "./some_file_v56-2108__2024--09.ods",
         },
     ]
     os.chdir(DATA_DIR)
@@ -322,13 +322,15 @@ def date_test() -> bool:
         new_file: str = phase.date(*tcase["input"])
         got_dircontents: List[str] = os.listdir()
         got_dircontents.sort()
-        exp_dircontents: List[str] = tcase["seed"] + [new_file]
+        exp_dircontents: List[str] = tcase["seed"] + \
+            [os.path.basename(new_file)]
         exp_dircontents.sort()
         if tcase["expected"] != new_file:
             print("Fail: dating went wrong!")
             print(f"    arg: {pprint.pformat(tcase["input"])}")
             print(f"    got: {new_file}")
             print(f"    exp: {tcase["expected"]}")
+            has_not_erred = False
             continue
         if got_dircontents != exp_dircontents:
             print("Fail: dating went wrong! >>")
