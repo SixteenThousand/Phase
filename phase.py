@@ -7,6 +7,7 @@ import sys
 import tomllib
 from typing import Pattern, Match, List, Tuple, Any
 from enum import Enum, unique
+from datetime import datetime
 
 
 type Version = int
@@ -35,8 +36,13 @@ def main():
         print("Phase, v0.4\nThe Best Worst Version Control")
         exit()
     match flags.action:
-        case "date":
-            pass
+        case Action.DATE:
+            new_name: str = date(
+                flags.product_path,
+                flags.stamp_format,
+                datetime.now()
+            )
+            print(f"{flags.product_path} -> {new_name}")
         case _:
             flags.product_path = os.path.abspath(flags.product_path)
             # start actually doing things
@@ -160,6 +166,36 @@ def backup_sample(versions: Product, regex: Pattern, config: dict[str,Any]):
     os.chdir(config["destination"])
     clean(get_versions(regex),config["limit"])
     os.chdir(orig_dir)
+
+"""
+Makes a copy of a given file with a date-time-stamp added to the file's name.
+Note that the stamp is added before the last extension, i.e. before the last
+'.' character.
+    @param file: The path to the given file
+    @param format: The format of the date-time-stamp
+    @return: The new file name
+"""
+def date(file: str, format: str, now: datetime) -> str:
+    dirname: str = os.path.dirname(file)
+    basename: str = os.path.basename(file)
+    ext_index: int = basename.rfind(".")
+    format_codes: dict[str,int] = {
+        "%y": now.year,
+        "%m": now.month,
+        "%d": now.day,
+        "%H": now.hour,
+        "%M": now.minute,
+        "%S": now.second,
+    }
+    for code,time in format_codes.items():
+        format = format.replace(code,"{:02}".format(time))
+    new_file: str = dirname + "/" if len(dirname) > 0 else ""
+    if ext_index == -1:
+        new_file += basename + format
+    else:
+        new_file += f"{basename[:ext_index]}{format}{basename[ext_index:]}"
+    shutil.copy2(file,new_file)
+    return new_file
 
 
 if __name__ == "__main__": main()
