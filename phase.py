@@ -5,7 +5,7 @@ import shutil
 import re
 import sys
 import tomllib
-from typing import Pattern, Match, List, Tuple, Any
+from typing import Pattern, Match, List, Tuple, Any, Union
 from enum import Enum
 import enum
 from datetime import datetime
@@ -37,32 +37,60 @@ class Flags():
         self.help: bool = False
         self.only_open: bool = False
         self.product_path: str = os.getcwd()
-        self.stamp_format: str = "%Y%m%d-%H%M%S"
+        self.stamp_format: str = ""
         self.output_dir: str = os.getcwd()
         self.backup_action: BackupAction = BackupAction.SAMPLE
+
+class ConfigError(Exception):
+    product_path: str
     
 def main():
     flags = flagparse(sys.argv)
+    flags.product_path = os.path.abspath(flags.product_path)
+    os.chdir(flags.product_path)
     if flags.help:
         print("Phase, v0.4\nThe Best Worst Version Control")
         exit()
+    # load product configration
+    config: Union[dict[str,Any],None] = None
+    versions: Product = []
+    if os.path.exists("./.phase"):
+        with open("./.phase","rb") as fp:
+            config = tomllib.load(fp)
+        config["regex"] = pat_to_regex(config["pattern"])
+        versions = get_versions(config["regex"])
     match flags.action:
         case Action.DATE:
             new_name: str = date(
                 flags.product_path,
-                flags.stamp_format,
+                # a nice default format is provided
+                flags.stamp_format or "_%Y%m%d-%H%M%S",
                 dst=flags.output_dir
             )
             print(f"copy {flags.product_path} -> {new_name}")
+        case Action.BACKUP:
+            if not config or not versions: raise ConfigError
+            match flags.backup_action:
+                case BackupAction.ALL:
+                    cmd: str = config["backup"]["all"]["cmd"]
+                    print(f"Running {cmd}")
+                    os.system(cmd)
+                    print("Done!")
+                case BackupAction.SAMPLE:
+                    backup_sample(
+                        versions,
+                        config["regex"],
+                        config["backup"]["sample"]
+                    )
+                case BackupAction.RELEASE:
+                    date(
+                        versions[0][0],
+                        flags.stamp_format or \
+                            config["backup"]["release"]["format"],
+                        dst=config["backup"]["release"]["destination"]
+                    )
         case _:
-            flags.product_path = os.path.abspath(flags.product_path)
-            # start actually doing things
-            os.chdir(flags.product_path)
-            # load product configration
-            with open("./.phase","rb") as fp:
-                config = tomllib.load(fp)
-            config["regex"] = pat_to_regex(config["pattern"])
-            versions: Product = get_versions(config["regex"])
+            if not config or not versions: raise ConfigError
             if not flags.only_open:
                 # make backups
                 backup_sample(
