@@ -186,8 +186,8 @@ cmd = 'rclone sync . GoogleDriveRemote:/directory/in/my/google/drive'
 
 - [x] phase [PRODUCT_PATH]
 - [x] phase [-o|--only-open]
-- [ ] phase backup
-- [ ] phase release
+- [x] phase backup
+- [x] phase release
 - [x] phase date
 - [ ] phase desktop
 - [ ] phase init
