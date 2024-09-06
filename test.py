@@ -324,8 +324,13 @@ def date_test() -> bool:
         got_dircontents.sort()
         exp_dircontents: List[str] = tcase["seed"] + [new_file]
         exp_dircontents.sort()
-        if (tcase["expected"] != new_file  or
-                got_dircontents != exp_dircontents):
+        if tcase["expected"] != new_file:
+            print("Fail: dating went wrong!")
+            print(f"    arg: {pprint.pformat(tcase["input"])}")
+            print(f"    got: {new_file}")
+            print(f"    exp: {tcase["expected"]}")
+            continue
+        if got_dircontents != exp_dircontents:
             print("Fail: dating went wrong! >>")
             print(f"    arg: {pprint.pformat(tcase["input"])}")
             print(f"    got: {pprint.pformat(got_dircontents)}")
