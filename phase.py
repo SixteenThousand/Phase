@@ -181,16 +181,7 @@ def date(file: str, format: str, now: datetime, dst: str="?") -> str:
     dst = os.path.abspath(dst)  # note this removes any '/' at the end
     basename: str = os.path.basename(file)
     ext_index: int = basename.rfind(".")
-    format_codes: dict[str,int] = {
-        "%y": now.year,
-        "%m": now.month,
-        "%d": now.day,
-        "%H": now.hour,
-        "%M": now.minute,
-        "%S": now.second,
-    }
-    for code,time in format_codes.items():
-        format = format.replace(code,"{:02}".format(time))
+    format = now.strftime(format)
     new_file: str
     if ext_index == -1:
         new_file = f"{dst}/{basename}{format}"

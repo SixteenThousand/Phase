@@ -302,27 +302,27 @@ class TestDate(ut.TestCase):
     def test_file_in_pwd(self):
         tcases: List[dict[str,Any]] = [
             {
-                "input": ("some_file","_%y%m%d-%H%M%S"),
+                "input": ("some_file","_%Y%m%d-%H%M%S"),
                 "seed": ["some_file"],
                 "expected": "some_file_20240907-210708",
             },
             {
-                "input": ("some_file_v23","_%y%m%d-%H%M%S"),
+                "input": ("some_file_v23","_%Y%m%d-%H%M%S"),
                 "seed": ["some_file_v23","some_file_v22","some_file_v24"],
                 "expected": "some_file_v23_20240907-210708",
             },
             {
-                "input": ("some_file_v34.pdf","_%y%m%d-%H%M%S"),
+                "input": ("some_file_v34.pdf","_%Y%m%d-%H%M%S"),
                 "seed": ["some_file_v34.pdf","some_file_v33.pdf","some_file_v35.pdf"],
                 "expected": "some_file_v34_20240907-210708.pdf",
             },
             {
-                "input": ("./some_file_v56.ods","_%y%m%d-%H%M%S"),
+                "input": ("./some_file_v56.ods","_%Y%m%d-%H%M%S"),
                 "seed": ["some_file_v56.ods"],
                 "expected": "some_file_v56_20240907-210708.ods",
             },
             {
-                "input": ("./some_file_v56.ods","-%H%S__%y--%m"),
+                "input": ("./some_file_v56.ods","-%H%S__%Y--%m"),
                 "seed": ["some_file_v56.ods"],
                 "expected": "some_file_v56-2108__2024--09.ods",
             },
@@ -344,7 +344,7 @@ class TestDate(ut.TestCase):
         Path("./some_directory/some_file").touch(exist_ok=False)
         new_file: str = phase.date(
             "./some_directory/some_file",
-            "_%y%m%d-%H%M%S",
+            "_%Y%m%d-%H%M%S",
             TestDate.default_datetime
         )
         self.assertEqual(
@@ -367,7 +367,7 @@ class TestDate(ut.TestCase):
         Path("./some_dir/salmon_v159").touch(exist_ok=False)
         new_salmon: str = phase.date(
             "./some_dir/salmon_v159",
-            "_%y%m",
+            "_%Y%m",
             TestDate.default_datetime,
             dst="releases"
         )
