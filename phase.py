@@ -91,6 +91,11 @@ def main():
                             config["backup"]["release"]["format"],
                         dst=config["backup"]["release"]["destination"]
                     )
+        case Action.DESKTOP:
+            if flags.desktop_remove:
+                pass
+            else:
+                add_desktop_file(flags.product_path)
         case _:
             if not config or not versions: raise ConfigError
             if not flags.only_open:
