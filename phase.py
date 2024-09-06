@@ -173,10 +173,12 @@ Note that the stamp is added before the last extension, i.e. before the last
 '.' character.
     @param file: The path to the given file
     @param format: The format of the date-time-stamp
-    @return: The new file name
+    @return: The new (absolute) file path
 """
-def date(file: str, format: str, now: datetime) -> str:
-    dirname: str = os.path.dirname(file)
+def date(file: str, format: str, now: datetime, dst: str="?") -> str:
+    if dst == "?":
+        dst = os.path.dirname(file)
+    dst = os.path.abspath(dst)  # note this removes any '/' at the end
     basename: str = os.path.basename(file)
     ext_index: int = basename.rfind(".")
     format_codes: dict[str,int] = {
@@ -189,11 +191,11 @@ def date(file: str, format: str, now: datetime) -> str:
     }
     for code,time in format_codes.items():
         format = format.replace(code,"{:02}".format(time))
-    new_file: str = dirname + "/" if len(dirname) > 0 else ""
+    new_file: str
     if ext_index == -1:
-        new_file += basename + format
+        new_file = f"{dst}/{basename}{format}"
     else:
-        new_file += f"{basename[:ext_index]}{format}{basename[ext_index:]}"
+        new_file = f"{dst}/{basename[:ext_index]}{format}{basename[ext_index:]}"
     shutil.copy2(file,new_file)
     return new_file
 
