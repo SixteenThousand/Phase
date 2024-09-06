@@ -16,7 +16,6 @@ def main():
     assert get_versions_test()
     assert clean_test()
     assert backup_sample_test()
-    assert flagparse_test()
     print("All manual tests passed!")
     ut.main()
 
@@ -216,81 +215,79 @@ def backup_sample_test() -> bool:
         return False
     return True
 
-def flagparse_test() -> bool:
-    has_not_erred: bool = True
+
+class TestFlagparse(ut.TestCase):
+    @staticmethod
     def new_flags(attrs: dict[str,Any]):
         res = phase.Flags()
         for key,val in attrs.items():
             setattr(res,key,val)
         return res
-    tcases: List[Tuple[List[str],phase.Flags]] = [
-        (
-            [],
-            new_flags({})
-        ),
-        (
-            ["-o"],
-            new_flags({
-                "only_open": True,
-            })
-        ),
-        (
-            ["--only-open"],
-            new_flags({
-                "only_open": True,
-            })
-        ),
-        (
-            ["-o","/home/username/Documents/Important-Thing"],
-            new_flags({
-                "only_open": True,
-                "product_path": "/home/username/Documents/Important-Thing",
-            })
-        ),
-        (
-            ["/home/username/Documents/Important-Thing","-o"],
-            new_flags({
-                "only_open": True,
-                "product_path": "/home/username/Documents/Important-Thing",
-            })
-        ),
-        (
-            ["date","-f=%y-%m-%d %H:%M:%S"],
-            new_flags({
-                "action": phase.Action.DATE,
-                "stamp_format": "%y-%m-%d %H:%M:%S",
-            })
-        ),
-        (
-            ["date","--format=%y-%m-%d %H:%M:%S"],
-            new_flags({
-                "action": phase.Action.DATE,
-                "stamp_format": "%y-%m-%d %H:%M:%S",
-            })
-        ),
-        (
-            ["-h"],
-            new_flags({
-                "help": True,
-            })
-        ),
-        (
-            ["--help"],
-            new_flags({
-                "help": True,
-            })
-        ),
-    ]
-    for tcase in tcases:
-        got: phase.Flags = phase.flagparse(["phase"] + tcase[0])
-        if got.__dict__ != tcase[1].__dict__:
-            print("Fail: flagparse went kaput >>")
-            print(f"    arg: {" ".join(tcase[0])}") 
-            print(f"    got: {pprint.pformat(got.__dict__)}")
-            print(f"    exp: {pprint.pformat(tcase[1].__dict__)}")
-            print("<<")
-            has_not_erred = False
-    return has_not_erred
+
+    def test_flagparse(self):
+        tcases: List[dict[str,Any]] = [
+            {
+                "input": [],
+                "expected": TestFlagparse.new_flags({})
+            },
+            {
+                "input": ["-o"],
+                "expected": TestFlagparse.new_flags({
+                    "only_open": True,
+                })
+            },
+            {
+                "input": ["--only-open"],
+                "expected": TestFlagparse.new_flags({
+                    "only_open": True,
+                })
+            },
+            {
+                "input": ["-o","/home/username/Documents/Important-Thing"],
+                "expected": TestFlagparse.new_flags({
+                    "only_open": True,
+                    "product_path": "/home/username/Documents/Important-Thing",
+                })
+            },
+            {
+                "input": ["/home/username/Documents/Important-Thing","-o"],
+                "expected": TestFlagparse.new_flags({
+                    "only_open": True,
+                    "product_path": "/home/username/Documents/Important-Thing",
+                })
+            },
+            {
+                "input": ["date","-f=%Y-%m-%d %H:%M:%S"],
+                "expected": TestFlagparse.new_flags({
+                    "action": phase.Action.DATE,
+                    "stamp_format": "%Y-%m-%d %H:%M:%S",
+                })
+            },
+            {
+                "input": ["date","--format=%Y-%m-%d %H:%M:%S"],
+                "expected": TestFlagparse.new_flags({
+                    "action": phase.Action.DATE,
+                    "stamp_format": "%Y-%m-%d %H:%M:%S",
+                })
+            },
+            {
+                "input": ["-h"],
+                "expected": TestFlagparse.new_flags({
+                    "help": True,
+                })
+            },
+            {
+                "input": ["--help"],
+                "expected": TestFlagparse.new_flags({
+                    "help": True,
+                })
+            },
+        ]
+        for tcase in tcases:
+            self.assertEqual(
+                phase.flagparse(["phase"] + tcase["input"]).__dict__,
+                tcase["expected"].__dict__
+            )
 
 
 class TestDate(ut.TestCase):
