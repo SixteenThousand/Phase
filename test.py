@@ -5,6 +5,7 @@ from pathlib import Path
 import pprint
 from typing import List, Tuple, Any, Pattern
 from datetime import datetime
+import unittest as ut
 
 PROJ_ROOT = os.getcwd()
 DATA_DIR = PROJ_ROOT + "/test-data"
@@ -16,9 +17,16 @@ def main():
     assert clean_test()
     assert backup_sample_test()
     assert flagparse_test()
-    assert date_test()
-    print("All tests passed!")
+    print("All manual tests passed!")
+    ut.main()
 
+
+def clear_old_seeds():
+    old_seed: List[str] =os.listdir(DATA_DIR)
+    if  len(old_seed) > 0:
+        os.system(
+            f"cd {DATA_DIR} && rm -r {" ".join(os.listdir(DATA_DIR))}"
+        )
 
 def pat_to_regex_test() -> bool:
     examples: dict[str,Pattern] = {
@@ -284,83 +292,73 @@ def flagparse_test() -> bool:
             has_not_erred = False
     return has_not_erred
 
-def date_test() -> bool:
-    has_not_erred: bool = True
-    tcases_now: datetime = datetime(2024,9,7,21,7,8)
-    tcases: List[dict[str,Any]] = [
-        {
-            "input": ("some_file","_%y%m%d-%H%M%S",tcases_now),
-            "seed": ["some_file"],
-            "expected": "some_file_20240907-210708",
-        },
-        {
-            "input": ("some_file_v23","_%y%m%d-%H%M%S",tcases_now),
-            "seed": ["some_file_v23","some_file_v22","some_file_v24"],
-            "expected": "some_file_v23_20240907-210708",
-        },
-        {
-            "input": ("some_file_v34.pdf","_%y%m%d-%H%M%S",tcases_now),
-            "seed": ["some_file_v34.pdf","some_file_v33.pdf","some_file_v35.pdf"],
-            "expected": "some_file_v34_20240907-210708.pdf",
-        },
-        {
-            "input": ("./some_file_v56.ods","_%y%m%d-%H%M%S",tcases_now),
-            "seed": ["some_file_v56.ods"],
-            "expected": "./some_file_v56_20240907-210708.ods",
-        },
-        {
-            "input": ("./some_file_v56.ods","-%H%S__%y--%m",tcases_now),
-            "seed": ["some_file_v56.ods"],
-            "expected": "./some_file_v56-2108__2024--09.ods",
-        },
-    ]
-    os.chdir(DATA_DIR)
-    for tcase in tcases:
-        os.system(f"rm -r {DATA_DIR}/*")
-        for file in tcase["seed"]:
-            Path(file).touch(exist_ok=False)
-        new_file: str = phase.date(*tcase["input"])
-        got_dircontents: List[str] = os.listdir()
-        got_dircontents.sort()
-        exp_dircontents: List[str] = tcase["seed"] + \
-            [os.path.basename(new_file)]
-        exp_dircontents.sort()
-        if tcase["expected"] != new_file:
-            print("Fail: dating went wrong!")
-            print(f"    arg: {pprint.pformat(tcase["input"])}")
-            print(f"    got: {new_file}")
-            print(f"    exp: {tcase["expected"]}")
-            has_not_erred = False
-            continue
-        if got_dircontents != exp_dircontents:
-            print("Fail: dating went wrong! >>")
-            print(f"    arg: {pprint.pformat(tcase["input"])}")
-            print(f"    got: {pprint.pformat(got_dircontents)}")
-            print(f"    exp: {pprint.pformat(exp_dircontents)}")
-            has_not_erred = False
-    os.system(f"rm -r {DATA_DIR}/*")
-    os.mkdir("some_directory")
-    Path("./some_directory/some_file").touch(exist_ok=False)
-    new_file = phase.date(
-        "./some_directory/some_file",
-        "_%y%m%d-%H%M%S",
-        tcases_now
-    )
-    exp_new_file: str =  "./some_directory/some_file_20240907-210708"
-    if new_file != exp_new_file:
-        print("Fail: dating naming went wrong when file not in pwd >>")
-        print(f"    got: {new_file}")
-        print(f"    exp: {exp_new_file}")
-    got_current_dir: List[str] = os.listdir()
-    got_nested_dir: List[str] = sorted(os.listdir("some_directory"))
-    exp_current_dir: List[str] = ["some_directory"]
-    exp_nested_dir: List[str] = ["some_file", "some_file_20240907-210708"]
-    if got_nested_dir != exp_nested_dir or \
-            got_current_dir != exp_current_dir:
-        print("Fail: dating changed file system wrong when file not in pwd")
-        print(f"    got: {got_current_dir},{got_nested_dir}")
-        print(f"    exp: {exp_current_dir},{exp_nested_dir}")
-    return has_not_erred
+
+class TestDate(ut.TestCase):
+    default_datetime: datetime = datetime(2024,9,7,21,7,8)
     
+    def setUp(self):
+        os.chdir(DATA_DIR)
+
+    def test_file_in_pwd(self):
+        tcases: List[dict[str,Any]] = [
+            {
+                "input": ("some_file","_%y%m%d-%H%M%S"),
+                "seed": ["some_file"],
+                "expected": "some_file_20240907-210708",
+            },
+            {
+                "input": ("some_file_v23","_%y%m%d-%H%M%S"),
+                "seed": ["some_file_v23","some_file_v22","some_file_v24"],
+                "expected": "some_file_v23_20240907-210708",
+            },
+            {
+                "input": ("some_file_v34.pdf","_%y%m%d-%H%M%S"),
+                "seed": ["some_file_v34.pdf","some_file_v33.pdf","some_file_v35.pdf"],
+                "expected": "some_file_v34_20240907-210708.pdf",
+            },
+            {
+                "input": ("./some_file_v56.ods","_%y%m%d-%H%M%S"),
+                "seed": ["some_file_v56.ods"],
+                "expected": "./some_file_v56_20240907-210708.ods",
+            },
+            {
+                "input": ("./some_file_v56.ods","-%H%S__%y--%m"),
+                "seed": ["some_file_v56.ods"],
+                "expected": "./some_file_v56-2108__2024--09.ods",
+            },
+        ]
+        for tcase in tcases:
+            clear_old_seeds()
+            for file in tcase["seed"]:
+                Path(file).touch(exist_ok=False)
+            new_file: str = phase.date(*tcase["input"],TestDate.default_datetime)
+            self.assertEqual(new_file,tcase["expected"])
+            self.assertEqual(
+                sorted(os.listdir()),
+                sorted(tcase["seed"] + [os.path.basename(new_file)])
+            )
+            
+    def test_file_not_in_pwd(self):
+        clear_old_seeds()
+        os.mkdir("some_directory")
+        Path("./some_directory/some_file").touch(exist_ok=False)
+        new_file: str = phase.date(
+            "./some_directory/some_file",
+            "_%y%m%d-%H%M%S",
+            TestDate.default_datetime
+        )
+        self.assertEqual(
+            new_file,
+            "./some_directory/some_file_20240907-210708"
+        )
+        self.assertEqual(
+            os.listdir(),
+            ["some_directory"]
+        )
+        self.assertEqual(
+            sorted(os.listdir("some_directory")),
+            ["some_file", "some_file_20240907-210708"]
+        )
+
 
 if __name__ == "__main__": main()
