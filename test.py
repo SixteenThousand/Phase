@@ -224,7 +224,14 @@ class TestFlagparse(ut.TestCase):
             setattr(res,key,val)
         return res
 
-    def test_flagparse(self):
+    def do_cases(self, tcases: List[dict[str,Any]]):
+        for tcase in tcases:
+            self.assertEqual(
+                phase.flagparse(["phase"] + tcase["input"]).__dict__,
+                tcase["expected"].__dict__
+            )
+
+    def test_default(self):
         tcases: List[dict[str,Any]] = [
             {
                 "input": [],
@@ -256,6 +263,11 @@ class TestFlagparse(ut.TestCase):
                     "product_path": "/home/username/Documents/Important-Thing",
                 })
             },
+        ]
+        self.do_cases(tcases)
+
+    def test_date(self):
+        tcases: List[dict[str,Any]] = [
             {
                 "input": ["date","-f","%Y-%m-%d %H:%M:%S"],
                 "expected": TestFlagparse.new_flags({
@@ -271,6 +283,18 @@ class TestFlagparse(ut.TestCase):
                 })
             },
             {
+                "input": ["date","-d","/path/to/some/directory"],
+                "expected": TestFlagparse.new_flags({
+                    "action": phase.Action.DATE,
+                    "output_dir": "/path/to/some/directory",
+                }),
+            },
+        ]
+        self.do_cases(tcases)
+    
+    def test_misc(self):
+        tcases: List[dict[str,Any]] = [
+            {
                 "input": ["-h"],
                 "expected": TestFlagparse.new_flags({
                     "help": True,
@@ -282,20 +306,9 @@ class TestFlagparse(ut.TestCase):
                     "help": True,
                 })
             },
-            {
-                "input": ["date","-d","/path/to/some/directory"],
-                "expected": TestFlagparse.new_flags({
-                    "action": phase.Action.DATE,
-                    "output_dir": "/path/to/some/directory",
-                }),
-            },
         ]
-        for tcase in tcases:
-            self.assertEqual(
-                phase.flagparse(["phase"] + tcase["input"]).__dict__,
-                tcase["expected"].__dict__
-            )
-
+        self.do_cases(tcases)
+    
 
 class TestDate(ut.TestCase):
     default_datetime: datetime = datetime(2024,9,7,21,7,8)
