@@ -372,8 +372,8 @@ class TestDate(ut.TestCase):
             dst="releases"
         )
         self.assertEqual(
+            new_salmon,
             f"{DATA_DIR}/releases/salmon_v159_202409",
-            new_salmon
         )
         self.assertTrue(os.path.exists(new_salmon))
         self.assertEqual(
