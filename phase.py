@@ -6,19 +6,27 @@ import re
 import sys
 import tomllib
 from typing import Pattern, Match, List, Tuple, Any
-from enum import Enum, unique
+from enum import Enum
+import enum
 from datetime import datetime
 
 
 type Version = int
 type Product = List[Tuple[str,Version]]
 
-# Represents main action for phase to take; default is to open the atest
+# Represents main action for phase to take; default is to open the latest
 # version & do clean-up
-@unique
+@enum.unique
 class Action(Enum):
     DEFAULT = "default"
     DATE = "date"
+    BACKUP = "backup"
+
+@enum.unique
+class BackupAction(Enum):
+    ALL = enum.auto()
+    RELEASE = enum.auto()
+    SAMPLE = enum.auto()
 
 # Represents the options specified at the commandline by user, after being 
 # parsed
@@ -30,6 +38,7 @@ class Flags():
         self.product_path: str = os.getcwd()
         self.stamp_format: str = "%Y%m%d-%H%M%S"
         self.output_dir: str = os.getcwd()
+        self.backup_action = BackupAction.SAMPLE
     
 def main():
     flags = flagparse(sys.argv)
