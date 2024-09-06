@@ -152,7 +152,8 @@ def flagparse(argv: List[str]) -> Flags:
             flags.action = Action.BACKUP
             flags.backup_action = BackupAction.RELEASE
         case Action.DESKTOP:
-            flags.desktop_remove = False
+            if not hasattr(flags,"desktop_remove"):
+                flags.desktop_remove = False
     return flags
 
 """

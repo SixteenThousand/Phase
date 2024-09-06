@@ -364,13 +364,13 @@ class TestFlagparse(ut.TestCase):
     
     def test_desktop(self):
         tcases: List[dict[str,Any]] = [
-            # {
-            #     "input": ["desktop"],
-            #     "expected": TestFlagparse.new_flags({
-            #         "action": phase.Action.DESKTOP,
-            #         "desktop_remove": False,
-            #     })
-            # },
+            {
+                "input": ["desktop"],
+                "expected": TestFlagparse.new_flags({
+                    "action": phase.Action.DESKTOP,
+                    "desktop_remove": False,
+                })
+            },
             {
                 "input": ["desktop","--add"],
                 "expected": TestFlagparse.new_flags({
@@ -378,13 +378,13 @@ class TestFlagparse(ut.TestCase):
                     "desktop_remove": False,
                 })
             },
-            # {
-            #     "input": ["desktop","--remove"],
-            #     "expected": TestFlagparse.new_flags({
-            #         "action": phase.Action.DESKTOP,
-            #         "desktop_remove": True,
-            #     })
-            # },
+            {
+                "input": ["desktop","--remove"],
+                "expected": TestFlagparse.new_flags({
+                    "action": phase.Action.DESKTOP,
+                    "desktop_remove": True,
+                })
+            },
         ]
         self.do_cases(tcases)
 
