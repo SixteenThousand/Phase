@@ -359,6 +359,27 @@ class TestDate(ut.TestCase):
             sorted(os.listdir("some_directory")),
             ["some_file", "some_file_20240907-210708"]
         )
+    
+    def test_dst(self):
+        clear_old_seeds()
+        os.mkdir("some_dir")
+        os.mkdir("releases")
+        Path("./some_dir/salmon_v159").touch(exist_ok=False)
+        new_salmon: str = phase.date(
+            "./some_dir/salmon_v159",
+            "_%y%m",
+            TestDate.default_datetime,
+            dst="releases"
+        )
+        self.assertEqual(
+            f"{DATA_DIR}/releases/salmon_v159_202409",
+            new_salmon
+        )
+        self.assertTrue(os.path.exists(new_salmon))
+        self.assertEqual(
+            os.listdir("some_dir"),
+            ["salmon_v159"]
+        )
 
 
 if __name__ == "__main__": main()
