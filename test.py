@@ -315,14 +315,14 @@ class TestFlagparse(ut.TestCase):
                 "input": ["backup","--sample"],
                 "expected": TestFlagparse.new_flags({
                     "action": phase.Action.BACKUP,
-                    "backup_type": phase.BackupAction.SAMPLE,
+                    "backup_action": phase.BackupAction.SAMPLE,
                 })
             },
             {
                 "input": ["backup","--release","/some/path"],
                 "expected": TestFlagparse.new_flags({
                     "action": phase.Action.BACKUP,
-                    "backup_type": phase.BackupAction.RELEASE,
+                    "backup_action": phase.BackupAction.RELEASE,
                     "product_path": "/some/path",
                 })
             },
@@ -336,7 +336,7 @@ class TestFlagparse(ut.TestCase):
                 ],
                 "expected": TestFlagparse.new_flags({
                     "action": phase.Action.BACKUP,
-                    "backup_type": phase.BackupAction.RELEASE,
+                    "backup_action": phase.BackupAction.RELEASE,
                     "product_path": "/some/path",
                     "output_dir": "/other/path",
                 })
@@ -345,7 +345,7 @@ class TestFlagparse(ut.TestCase):
                 "input": ["release"],
                 "expected": TestFlagparse.new_flags({
                     "action": phase.Action.BACKUP,
-                    "backup_type": phase.BackupAction.RELEASE,
+                    "backup_action": phase.BackupAction.RELEASE,
                 })
             },
             {
@@ -354,7 +354,7 @@ class TestFlagparse(ut.TestCase):
                 ],
                 "expected": TestFlagparse.new_flags({
                     "action": phase.Action.BACKUP,
-                    "backup_type": phase.BackupAction.RELEASE,
+                    "backup_action": phase.BackupAction.RELEASE,
                     "product_path": "/some/path",
                     "output_dir": "/other/path",
                 })
