@@ -22,6 +22,7 @@ class Action(Enum):
     DATE = "date"
     BACKUP = "backup"
     RELEASE = "release"
+    DESKTOP = "desktop"
 
 @enum.unique
 class BackupAction(Enum):
@@ -39,7 +40,8 @@ class Flags():
         self.product_path: str = os.getcwd()
         self.stamp_format: str = ""
         self.output_dir: str = os.getcwd()
-        self.backup_action: BackupAction = BackupAction.SAMPLE
+        self.backup_action: BackupAction
+        self.desktop_remove: bool
 
 class ConfigError(Exception):
     product_path: str
@@ -134,10 +136,16 @@ def flagparse(argv: List[str]) -> Flags:
                 case Action.BACKUP:
                     try: flags.backup_action = BackupAction(argv[i])
                     except ValueError: pass
+                case Action.DESKTOP:
+                    if argv[i] == "--remove":
+                        flags.desktop_remove = True
         i += 1
-    if flags.action == Action.RELEASE:
-        flags.action = Action.BACKUP
-        flags.backup_action = BackupAction.RELEASE
+    match flags.action:
+        case Action.RELEASE:
+            flags.action = Action.BACKUP
+            flags.backup_action = BackupAction.RELEASE
+        case Action.DESKTOP:
+            flags.desktop_remove = False
     return flags
 
 """
