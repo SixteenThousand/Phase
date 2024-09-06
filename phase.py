@@ -53,7 +53,7 @@ def main():
                 flags.stamp_format,
                 dst=flags.output_dir
             )
-            print(f"{flags.product_path} -> {new_name}")
+            print(f"copy {flags.product_path} -> {new_name}")
         case _:
             flags.product_path = os.path.abspath(flags.product_path)
             # start actually doing things
