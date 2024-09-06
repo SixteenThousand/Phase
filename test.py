@@ -346,11 +346,20 @@ def date_test() -> bool:
         "_%y%m%d-%H%M%S",
         tcases_now
     )
-    if new_file != "./some_directory/some_file_20240907-210708":
-        print("Fail: dating naming went wrong when path used")
-    if (os.listdir() != ["some_directory"] or
-            os.listdir("some_directory") != [new_file]):
-        print("Fail: dating changed file system incorrectly when path used")
+    exp_new_file: str =  "./some_directory/some_file_20240907-210708"
+    if new_file != exp_new_file:
+        print("Fail: dating naming went wrong when file not in pwd >>")
+        print(f"    got: {new_file}")
+        print(f"    exp: {exp_new_file}")
+    got_current_dir: List[str] = os.listdir()
+    got_nested_dir: List[str] = sorted(os.listdir("some_directory"))
+    exp_current_dir: List[str] = ["some_directory"]
+    exp_nested_dir: List[str] = ["some_file", "some_file_20240907-210708"]
+    if got_nested_dir != exp_nested_dir or \
+            got_current_dir != exp_current_dir:
+        print("Fail: dating changed file system wrong when file not in pwd")
+        print(f"    got: {got_current_dir},{got_nested_dir}")
+        print(f"    exp: {exp_current_dir},{exp_nested_dir}")
     return has_not_erred
     
 
