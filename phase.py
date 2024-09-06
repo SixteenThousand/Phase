@@ -76,9 +76,6 @@ def main():
             os.system(f"xdg-open {versions[0][0]} &")
 
 
-"""
-Parses the arguments passed at the command line into a Flags object.
-"""
 def flagparse(argv: List[str]) -> Flags:
     flags = Flags()
     if len(argv) == 1: return flags
