@@ -81,8 +81,10 @@ An alias for `phase backup --release`.
 ### `phase date [[-f|--format][=STAMP_FORMAT]] FILE`
 
 Adds a date-time-stamp to `FILE`, using the format `STAMP_FORMAT`. 
-`STAMP_FORMAT` uses the following codes:
-- `%y` => year
+`STAMP_FORMAT` is parsed using the python `datetime.strftime` function (see
+<https://docs.python.org/3/library/datetime.html#datetime.datetime#date.strftime>
+for docs). The main ones you will likely want to use are:
+- `%Y` => year
 - `%m` => month
 - `%d` => day (of month)
 - `%H` => hour (using a 24-hour clock)
@@ -95,7 +97,7 @@ version-managed product.
 
 #### Examples
 
-- `phase date -t='%y-%m-%d' something.pdf` will rename 'something.pdf' to 
+- `phase date -t='%Y-%m-%d' something.pdf` will rename 'something.pdf' to 
   'something_2024-08-29.pdf'
 - `phase date -t='%m%d' something.otherthing.pdf` will rename 
   'something.otherthing.pdf' to 'something_0829.otherthing.pdf'
@@ -167,7 +169,7 @@ limit = 10
 # The date-time format used when adding a date to the filename. See the 
 # documentation for 'phase date' (under #Usage) for definitions of the %x 
 # codes.
-format = '%y%m%d-%H%M%S'
+format = '%Y%m%d-%H%M'
 
 # The place to put the copy of the latest version.
 destination = './Deep Storage'

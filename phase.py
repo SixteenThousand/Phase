@@ -171,9 +171,13 @@ def backup_sample(versions: Product, regex: Pattern, config: dict[str,Any]):
 Makes a copy of a given file with a date-time-stamp added to the file's name.
 Note that the stamp is added before the last extension, i.e. before the last
 '.' character.
-    @param file: The path to the given file
-    @param format: The format of the date-time-stamp
-    @return: The new (absolute) file path
+    @param file: The path to the given file.
+    @param format: The format of the date-time-stamp.
+    @param now: The datetime to be used for the stamp. Defaults to the
+        present.
+    @param dst: The directory the copy should be placed in. Defaults to the
+        pwd.
+    @return: The new (absolute) file path.
 """
 def date(file: str, format: str, now: datetime, dst: str="?") -> str:
     if dst == "?":
