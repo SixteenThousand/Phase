@@ -261,9 +261,9 @@ def date(
 """
 Prompts the user with a given question and returns their answer.
 """
-def prompt(question: str) -> Any:
+def prompt(question: str) -> str:
     print(f"{question}: ")
-    return input
+    return input()
 
 def add_desktop_file(product_path: str):
     app_name: str = prompt("What do want the application to be called?")
