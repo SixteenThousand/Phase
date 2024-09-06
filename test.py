@@ -319,12 +319,12 @@ class TestDate(ut.TestCase):
             {
                 "input": ("./some_file_v56.ods","_%y%m%d-%H%M%S"),
                 "seed": ["some_file_v56.ods"],
-                "expected": "./some_file_v56_20240907-210708.ods",
+                "expected": "some_file_v56_20240907-210708.ods",
             },
             {
                 "input": ("./some_file_v56.ods","-%H%S__%y--%m"),
                 "seed": ["some_file_v56.ods"],
-                "expected": "./some_file_v56-2108__2024--09.ods",
+                "expected": "some_file_v56-2108__2024--09.ods",
             },
         ]
         for tcase in tcases:
@@ -332,7 +332,7 @@ class TestDate(ut.TestCase):
             for file in tcase["seed"]:
                 Path(file).touch(exist_ok=False)
             new_file: str = phase.date(*tcase["input"],TestDate.default_datetime)
-            self.assertEqual(new_file,tcase["expected"])
+            self.assertEqual(new_file,f"{DATA_DIR}/{tcase["expected"]}")
             self.assertEqual(
                 sorted(os.listdir()),
                 sorted(tcase["seed"] + [os.path.basename(new_file)])
@@ -349,7 +349,7 @@ class TestDate(ut.TestCase):
         )
         self.assertEqual(
             new_file,
-            "./some_directory/some_file_20240907-210708"
+            f"{DATA_DIR}/some_directory/some_file_20240907-210708"
         )
         self.assertEqual(
             os.listdir(),
