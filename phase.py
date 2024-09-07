@@ -292,32 +292,59 @@ def prompt_yn(question: str, default_yes: bool=True) -> bool:
         else:
             return False
 
+"""
+Creates  or overwrites a desktop file for the product at a given path
+with a given configuration.
+    @param product_path: The given path.
+    @param config: The product configuration. May or may not have a
+        desktop file configuration. If it has no such section, prompts 
+        the user for the information needed to make one, and then adds
+        the relevant settings to the config file.
+"""
 def add_desktop_file(product_path: str, config: dict[str,Any]):
     if not os.path.exists(DESKTOP_FILES_LOC):
         os.mkdir(DESKTOP_FILES_LOC)
-    if config:
+    if "desktop" in config:
         print(
             "Desktop file configuration exists -",
-            "trying to make desktop file from that..."
+            "trying to make desktop file from that...",
+            end="\n\n"
         )
     else:
-        config["name"] = prompt("What do want the application to be called? ")
-        config["description"] = prompt("Description (one line)")
-        config["only_open"] = \
+        # prompt the user to make desktop config options
+        config["desktop"] = dict()
+        config["desktop"]["name"] = prompt("What do want the application to be called? ")
+        config["desktop"]["description"] = prompt("Description (one line)")
+        config["desktop"]["only_open"] = \
             prompt("Skip cleaning when opening the app? (y/n)") == "y"
         # a formatted datetime is used here because
         #     a) it limits how long the datetime-stamp will be
         #     b) it could be useful for debugging later
-        config["location"] = (
+        config["desktop"]["location"] = (
             DESKTOP_FILES_LOC
             + "/"
             + os.path.basename(product_path)
             + datetime.now().strftime("-%Y%m%d%H%M%S")
             + ".desktop"
         )
-    if os.path.exists(config["location"]):
+        config_file: TextIO = open(
+            f"{product_path}/.phase",
+            "a",
+            encoding="utf8"
+        )
+        # write the newly made options to the config file
+        config_file.write(textwrap.dedent(f"""
+            [desktop]
+            # Do not change this!
+            location = '{config["desktop"]["location"]}'
+            name = '{config["desktop"]["name"]}'
+            description = '{config["desktop"]["description"]}'
+            only_open = {str(config["desktop"]["only_open"]).lower()}
+        """))
+        config_file.close()
+    if os.path.exists(config["desktop"]["location"]):
         conflicting_file: TextIO = open(
-            config["location"],"r",encoding="utf8"
+            config["desktop"]["location"],"r",encoding="utf8"
         )
         for line in conflicting_file:
             if line.startswith("Exec="):
@@ -325,41 +352,24 @@ def add_desktop_file(product_path: str, config: dict[str,Any]):
                     A desktop file for this product seems to exist already.
                     When opened it runs:
                     -> {line[5:]}
-                    If this matches what you want this desktop file to do,
-                    just exit now. If not, continue and overwrite this file.
-                    If you want both files, quit, wait a minute, and try
-                    again.
+                    If you want to overwrite this file, run
+                    -> phase desktop --remove
+                    to get rid of the existing file, and then try again.
                 """))
-                if prompt_yn("Quit?"):
-                    exit(0)
-                break
+                exit(0)
     desktop_file: TextIO = open(
-        config["location"],
+        config["desktop"]["location"],
         "w",
         encoding="utf8"
     )
-    desktop_file.write(textwrap.dedent(f"""
+    desktop_file.write(textwrap.dedent(f"""\
         [Desktop Entry]
-        Name={config["name"]}
-        GenericName={config["description"]}
-        Exec=phase {"--only-open " if config["only_open"] else ""}{product_path}
+        Name={config["desktop"]["name"]}
+        GenericName={config["desktop"]["description"]}
+        Exec=phase {"--only-open " if config["desktop"]["only_open"] else ""}{product_path}
         Type=Application
     """))
     desktop_file.close()
-    config_file: TextIO = open(
-        f"{product_path}/.phase",
-        "a",
-        encoding="utf8"
-    )
-    config_file.write(textwrap.dedent(f"""
-        [desktop]
-        # Do not change this!
-        location = '{config["location"]}'
-        name = '{config["name"]}'
-        description = '{config["description"]}'
-        only_open = '{config["only_open"]}'
-    """))
-    config_file.close()
 
 
 if __name__ == "__main__": main()
