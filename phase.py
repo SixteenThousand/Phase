@@ -266,12 +266,28 @@ def date(
     shutil.copy2(file,new_file)
     return new_file
 
-"""
-Prompts the user with a given question and returns their answer.
-"""
-def prompt(question: str) -> str:
-    print(f"{question}: ")
-    return input()
+def prompt(question: str, default: str="") -> str:
+    print(f"\x1b21m{question}\x1b[0m")
+    print("\x1b[1;5m> \x1b[0m")
+    answer: str = input()
+    return answer if answer else default
+
+def prompt_yn(question: str, default_yes: bool=True) -> bool:
+    answer: str
+    if default_yes:
+        print(f"{question} (Y/n): ",end="")
+        answer = input()
+        if answer:
+            return answer.lower() in ["yes","y"]
+        else:
+            return True
+    else:
+        print(f"{question} (y/N): ",end="")
+        answer = input()
+        if answer:
+            return answer.lower() in ["no","n"]
+        else:
+            return False
 
 def add_desktop_file(product_path: str):
     app_name: str = prompt(
