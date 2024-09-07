@@ -16,6 +16,9 @@ import string
 type Version = int
 type Product = List[Tuple[str,Version]]
 
+DESKTOP_FILES_LOC: str = \
+    f"{os.getenv("HOME")}/.local/share/applications/phase"
+
 # Represents main action for phase to take; default is to open the latest
 # version & do clean-up
 @enum.unique
@@ -289,40 +292,72 @@ def prompt_yn(question: str, default_yes: bool=True) -> bool:
         else:
             return False
 
-def add_desktop_file(product_path: str):
-    app_name: str = prompt(
-        "What do want the application to be called? " + \
-            "(puncuation is not allowed)"
-    )
-    desktop_filename: str = app_name.lower().replace(" ","-")
-    for char in string.punctuation:
-        if desktop_filename.find(char) >= 0:
-            print("Do not put punctuation in the app name!")
-            return
-    description: str = prompt("Description (one line)")
-    only_open: bool = \
-        prompt("Skip cleaning when opening the app? (y/n)") == "y"
+def add_desktop_file(product_path: str, config: dict[str,Any]):
+    if not os.path.exists(DESKTOP_FILES_LOC):
+        os.mkdir(DESKTOP_FILES_LOC)
+    if config:
+        print(
+            "Desktop file configuration exists -",
+            "trying to make desktop file from that..."
+        )
+    else:
+        config["name"] = prompt("What do want the application to be called? ")
+        config["description"] = prompt("Description (one line)")
+        config["only_open"] = \
+            prompt("Skip cleaning when opening the app? (y/n)") == "y"
+        # a formatted datetime is used here because
+        #     a) it limits how long the datetime-stamp will be
+        #     b) it could be useful for debugging later
+        config["location"] = (
+            DESKTOP_FILES_LOC
+            + "/"
+            + os.path.basename(product_path)
+            + datetime.now().strftime("-%Y%m%d%H%M%S")
+            + ".desktop"
+        )
+    if os.path.exists(config["location"]):
+        conflicting_file: TextIO = open(
+            config["location"],"r",encoding="utf8"
+        )
+        for line in conflicting_file:
+            if line.startswith("Exec="):
+                print(textwrap.dedent(f"""\
+                    A desktop file for this product seems to exist already.
+                    When opened it runs:
+                    -> {line[5:]}
+                    If this matches what you want this desktop file to do,
+                    just exit now. If not, continue and overwrite this file.
+                    If you want both files, quit, wait a minute, and try
+                    again.
+                """))
+                if prompt_yn("Quit?"):
+                    exit(0)
+                break
     desktop_file: TextIO = open(
-        f"{os.getenv("HOME")}/.local/share/applications/{desktop_filename}.desktop",
+        config["location"],
         "w",
         encoding="utf8"
     )
-    desktop_file.write( f"""
+    desktop_file.write(textwrap.dedent(f"""
         [Desktop Entry]
-        Name={app_name}
-        GenericName={description}
-        Exec=phase {"--only-open " if only_open else ""}{product_path}
+        Name={config["name"]}
+        GenericName={config["description"]}
+        Exec=phase {"--only-open " if config["only_open"] else ""}{product_path}
         Type=Application
-    """)
+    """))
     desktop_file.close()
     config_file: TextIO = open(
         f"{product_path}/.phase",
         "a",
         encoding="utf8"
     )
-    config_file.write( textwrap.dedent(f"""
+    config_file.write(textwrap.dedent(f"""
         [desktop]
-        location = "~/.local/share/applications/{desktop_filename}.desktop"
+        # Do not change this!
+        location = '{config["location"]}'
+        name = '{config["name"]}'
+        description = '{config["description"]}'
+        only_open = '{config["only_open"]}'
     """))
     config_file.close()
 
