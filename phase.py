@@ -270,8 +270,8 @@ def date(
     return new_file
 
 def prompt(question: str, default: str="") -> str:
-    print(f"\x1b21m{question}\x1b[0m")
-    print("\x1b[1;5m> \x1b[0m")
+    print(f"\x1b[1m{question}\x1b[0m")
+    print("\x1b[1m> \x1b[0m", end="")
     answer: str = input()
     return answer if answer else default
 
