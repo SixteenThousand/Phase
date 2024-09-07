@@ -278,14 +278,14 @@ def prompt_yn(question: str, default_yes: bool=True) -> bool:
         print(f"{question} (Y/n): ",end="")
         answer = input()
         if answer:
-            return answer.lower() in ["yes","y"]
+            return answer.lower() not in ["no","n"]
         else:
             return True
     else:
         print(f"{question} (y/N): ",end="")
         answer = input()
         if answer:
-            return answer.lower() in ["no","n"]
+            return answer.lower() in ["yes","y"]
         else:
             return False
 
