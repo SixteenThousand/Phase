@@ -442,6 +442,7 @@ def initialise(product_path: str):
         "Default is ./backups",
         default="./backups"
     )
+    os.makedirs(config["backup"]["sample"]["destination"],exist_ok=True)
     config["backup"]["sample"]["limit"] = prompt(
         "How many backups should be kept around at a time?\n" +
         "Default is 11",
@@ -458,6 +459,7 @@ def initialise(product_path: str):
         "Where do you want those Releases to go? (path can be relative)",
         default="./releases"
     )
+    os.makedirs(config["backup"]["release"]["destination"],exist_ok=True)
     config["backup"]["all"]["cmd"] = prompt(
         "What is a shell command you can use to backup this entire " +
         "directory?\n If you don't have/want one, just leave this blank",
