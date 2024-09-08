@@ -61,7 +61,7 @@ def main():
     flags.product_path = os.path.abspath(flags.product_path)
     os.chdir(flags.product_path)
     if flags.help:
-        print("Phase, v0.5\nThe Best Worst Version Control")
+        print("Phase, v0.6\nThe Best Worst Version Control")
         exit()
     # load product configration
     config: dict[str,Any] = dict()

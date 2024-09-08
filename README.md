@@ -13,7 +13,7 @@ filename and be done with it. This is where *phase* comes in.
 
 ## Usage
 
-Please note that phase is still only at v0.2; as such, most of these options 
+Please note that phase is still only at v0.6; as such, most of these options 
 do not work yet. See [development roadmap](#development-roadmap) for 
 details.
 
@@ -189,9 +189,9 @@ cmd = 'rclone sync . GoogleDriveRemote:/directory/in/my/google/drive'
 - [x] phase backup
 - [x] phase release
 - [x] phase date
-- [ ] phase desktop
+- [x] phase desktop
 - [ ] phase init
-- [ ] phase config
+- [-] phase config
 
 ### Development Wishlist
 
