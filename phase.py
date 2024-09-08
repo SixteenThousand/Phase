@@ -33,6 +33,7 @@ class Action(enum.Enum):
     BACKUP = "backup"
     RELEASE = "release"
     DESKTOP = "desktop"
+    INIT = "init"
 
 @enum.unique
 class BackupAction(enum.Enum):
@@ -107,6 +108,8 @@ def main():
                 remove_desktop_file(flags.product_path,config)
             else:
                 add_desktop_file(flags.product_path,config)
+        case Action.INIT:
+            initialise(flags.product_path)
         case _:
             if not config or not versions: raise ConfigError
             if not flags.only_open:
@@ -413,6 +416,69 @@ def remove_desktop_file(product_path,config: dict[str,Any]):
             if start_index <= i and i < end_index:
                 continue
             config_file.write(new_config[i])
+
+def initialise(product_path: str):
+    if os.path.exists(product_path):
+        print("This directory already contains a .phase file!")
+        print("Delete it if you wish to continue")
+        exit(0)
+    config: dict[str,Any] = dict()
+    config["pattern"] = prompt("What pattern should product files have?")
+    config["limit"] = prompt(
+        "How many versions should be left in the main directory at a time?"
+    )
+    config["backup"] = dict()
+    config["backup"]["sample"] = dict()
+    config["backup"]["release"] = dict()
+    config["backup"]["all"] = dict()
+    config["backup"]["sample"]["frequency"] = prompt(
+        "How often should a backup be made?\n" + 
+        "Your answer should be a number N, and a backup will then be made " +
+        "every Nth version"
+    )
+    config["backup"]["sample"]["destination"] = prompt(
+        "Where should those backups go? (path can be relative)"
+    )
+    config["backup"]["sample"]["limit"] = prompt(
+        "How many backups should be kept around at a time?"
+    )
+    config["backup"]["release"]["format"] = prompt(
+        "You can also make copies of versions with a date/time stamp " +
+        "attached, called \"Releases\".\n What format do you want those " +
+        "date/time stamps to be in?"
+    )
+    config["backup"]["release"]["destination"] = prompt(
+        "Where do you want those Releases to go? (path can be relative)"
+    )
+    config["backup"]["all"]["cmd"] = prompt(
+        "What is a shell command you can use to backup this entire " +
+        "directory?\n If you don't have/want one, just leave this blank",
+        default="echo \"No backup all command assigned\""
+    )
+    create_desktop: bool = prompt_yn(
+        "Create a desktop entry file?\n This will allow you to open " +
+        "the latest version of the product from an app launcher",
+        default_yes=False
+    )
+    config_file: TextIO = open(f"{product_path}/.phase","w",encoding="utf8")
+    config_file.write(textwrap.dedent(f"""\
+        pattern = '{config["pattern"]}'
+        limit = {config["limit"]}
+        
+        [backup]
+        [backup.sample]
+        frequency = {config["backup"]["sample"]["frequency"]}
+        destination = '{config["backup"]["sample"]["destination"]}'
+        limit = {config["backup"]["sample"]["limit"]}
+        [backup.release]
+        format = '{config["backup"]["release"]["format"]}'
+        destination = '{config["backup"]["release"]["destination"]}'
+        [backup.all]
+        cmd = '{config["backup"]["all"]["cmd"]}'
+    """))
+    if create_desktop:
+        add_desktop_file(product_path,config)
+    print("---\nInitialisation Complete!")
     
 
 
