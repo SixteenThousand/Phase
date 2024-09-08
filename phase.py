@@ -6,7 +6,6 @@ import re
 import sys
 import tomllib
 from typing import Pattern, Match, List, Tuple, Any, TextIO
-from enum import Enum
 import enum
 from datetime import datetime
 import textwrap
@@ -21,7 +20,7 @@ DESKTOP_FILES_LOC: str = \
 # Represents main action for phase to take; default is to open the latest
 # version & do clean-up
 @enum.unique
-class Action(Enum):
+class Action(enum.Enum):
     DEFAULT = "default"
     DATE = "date"
     BACKUP = "backup"
@@ -29,7 +28,7 @@ class Action(Enum):
     DESKTOP = "desktop"
 
 @enum.unique
-class BackupAction(Enum):
+class BackupAction(enum.Enum):
     ALL = "--all"
     RELEASE = "--release"
     SAMPLE = "--sample"
