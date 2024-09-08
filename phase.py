@@ -465,11 +465,6 @@ def initialise(product_path: str):
         "directory?\n If you don't have/want one, just leave this blank",
         default="echo \"No backup all command assigned\""
     )
-    create_desktop: bool = prompt_yn(
-        "Create a desktop entry file?\n This will allow you to open " +
-        "the latest version of the product from an app launcher",
-        default_yes=False
-    )
     config_file: TextIO = open(f"{product_path}/.phase","w",encoding="utf8")
     config_file.write(textwrap.dedent(f"""\
         pattern = '{config["pattern"]}'
@@ -486,6 +481,11 @@ def initialise(product_path: str):
         [backup.all]
         cmd = '{config["backup"]["all"]["cmd"]}'
     """))
+    create_desktop: bool = prompt_yn(
+        "Create a desktop entry file?\n This will allow you to open " +
+        "the latest version of the product from an app launcher",
+        default_yes=False
+    )
     if create_desktop:
         add_desktop_file(product_path,config)
     print("---\nInitialisation Complete!")
