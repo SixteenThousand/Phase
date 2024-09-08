@@ -488,9 +488,9 @@ class TestDate(ut.TestCase):
             TestDate.default_datetime,
             dst="./releases"
         )
-        self.assertEqual(new_dir,"a_product_aug")
-        self.assertEqual(os.listdir("releases"),[new_dir])
-        self.assertEqual(os.listdir(),["a_product"])
+        self.assertEqual(new_dir,f"{DATA_DIR}/releases/a_product_Sep")
+        self.assertEqual(os.listdir("releases"),["a_product_Sep"])
+        self.assertEqual(sorted(os.listdir()),["a_product","releases"])
 
 
 if __name__ == "__main__": main()
