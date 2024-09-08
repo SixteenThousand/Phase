@@ -5,12 +5,11 @@ import shutil
 import re
 import sys
 import tomllib
-from typing import Pattern, Match, List, Tuple, Any, Union, TextIO
+from typing import Pattern, Match, List, Tuple, Any, TextIO
 from enum import Enum
 import enum
 from datetime import datetime
 import textwrap
-import string
 
 
 type Version = int
@@ -59,7 +58,7 @@ def main():
         print("Phase, v0.5\nThe Best Worst Version Control")
         exit()
     # load product configration
-    config: Union[dict[str,Any],None] = None
+    config: dict[str,Any] = dict()
     versions: Product = []
     if os.path.exists("./.phase"):
         with open("./.phase","rb") as fp:
