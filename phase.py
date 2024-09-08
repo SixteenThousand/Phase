@@ -418,7 +418,7 @@ def remove_desktop_file(product_path,config: dict[str,Any]):
             config_file.write(new_config[i])
 
 def initialise(product_path: str):
-    if os.path.exists(product_path):
+    if os.path.exists(product_path + "/.phase"):
         print("This directory already contains a .phase file!")
         print("Delete it if you wish to continue")
         exit(0)
@@ -455,7 +455,7 @@ def initialise(product_path: str):
         "attached, called \"Releases\".\n What format do you want those " +
         "date/time stamps to be in?\n" +
         "Default is _%Y%m%d",
-        default="%Y%m%d"
+        default="_%Y%m%d"
     )
     config["backup"]["release"]["destination"] = prompt(
         "Where do you want those Releases to go? (path can be relative)\n" +
