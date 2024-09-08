@@ -275,7 +275,10 @@ def date(
         new_file = f"{dst}/{basename}{format}"
     else:
         new_file = f"{dst}/{basename[:ext_index]}{format}{basename[ext_index:]}"
-    shutil.copy2(file,new_file)
+    if os.path.isdir(file):
+        shutil.copytree(file,new_file)
+    else:
+        shutil.copy2(file,new_file)
     return new_file
 
 def prompt(question: str, default: str="") -> str:
