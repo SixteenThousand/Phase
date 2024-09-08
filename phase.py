@@ -1,14 +1,21 @@
 #!/bin/env python3
 
-import os
-import shutil
-import re
-import sys
-import tomllib
-from typing import Pattern, Match, List, Tuple, Any, TextIO
 import enum
-from datetime import datetime
+import os
+import re
+import shutil
+import sys
 import textwrap
+import tomllib
+from datetime import datetime
+from typing import (
+    Pattern,
+    Match,
+    List,
+    Tuple,
+    Any,
+    TextIO
+)
 
 
 type Version = int
