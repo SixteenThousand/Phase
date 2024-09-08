@@ -434,21 +434,29 @@ def initialise(product_path: str):
     config["backup"]["sample"]["frequency"] = prompt(
         "How often should a backup be made?\n" + 
         "Your answer should be a number N, and a backup will then be made " +
-        "every Nth version"
+        "every Nth version. Default is 5",
+        default="5"
     )
     config["backup"]["sample"]["destination"] = prompt(
-        "Where should those backups go? (path can be relative)"
+        "Where should those backups go? (path can be relative)\n" + 
+        "Default is ./backups",
+        default="./backups"
     )
     config["backup"]["sample"]["limit"] = prompt(
-        "How many backups should be kept around at a time?"
+        "How many backups should be kept around at a time?\n" +
+        "Default is 11",
+        default="11"
     )
     config["backup"]["release"]["format"] = prompt(
         "You can also make copies of versions with a date/time stamp " +
         "attached, called \"Releases\".\n What format do you want those " +
-        "date/time stamps to be in?"
+        "date/time stamps to be in?\n" +
+        "Default is _%Y%m%d",
+        default="%Y%m%d"
     )
     config["backup"]["release"]["destination"] = prompt(
-        "Where do you want those Releases to go? (path can be relative)"
+        "Where do you want those Releases to go? (path can be relative)",
+        default="./releases"
     )
     config["backup"]["all"]["cmd"] = prompt(
         "What is a shell command you can use to backup this entire " +
