@@ -477,6 +477,20 @@ class TestDate(ut.TestCase):
             os.listdir("some_dir"),
             ["salmon_v159"]
         )
+    
+    def test_file_is_dir(self):
+        clear_old_seeds()
+        os.mkdir("a_product")
+        os.mkdir("releases")
+        new_dir: str = phase.date(
+            "./a_product",
+            "_%b",
+            TestDate.default_datetime,
+            dst="./releases"
+        )
+        self.assertEqual(new_dir,"a_product_aug")
+        self.assertEqual(os.listdir("releases"),[new_dir])
+        self.assertEqual(os.listdir(),["a_product"])
 
 
 if __name__ == "__main__": main()
