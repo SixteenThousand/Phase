@@ -287,14 +287,14 @@ def prompt(question: str, default: str="") -> str:
 def prompt_yn(question: str, default_yes: bool=True) -> bool:
     answer: str
     if default_yes:
-        print(f"{question} (Y/n): ",end="")
+        print(f"\x1b[1m{question} (Y/n)\n> \x1b[0m",end="")
         answer = input()
         if answer:
             return answer.lower() not in ["no","n"]
         else:
             return True
     else:
-        print(f"{question} (y/N): ",end="")
+        print(f"\x1b[1m{question} (y/N)\n> \x1b[0m",end="")
         answer = input()
         if answer:
             return answer.lower() in ["yes","y"]
