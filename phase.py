@@ -325,7 +325,7 @@ def add_desktop_file(product_path: str, config: dict[str,Any]):
         config["desktop"]["name"] = prompt("What do want the application to be called? ")
         config["desktop"]["description"] = prompt("Description (one line)")
         config["desktop"]["only_open"] = \
-            prompt("Skip cleaning when opening the app? (y/n)") == "y"
+            prompt_yn("Skip cleaning when opening the app?",default_yes=False)
         # a formatted datetime is used here because
         #     a) it limits how long the datetime-stamp will be
         #     b) it could be useful for debugging later
