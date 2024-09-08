@@ -13,10 +13,6 @@ filename and be done with it. This is where *phase* comes in.
 
 ## Usage
 
-Please note that phase is still only at v0.6; as such, most of these options 
-do not work yet. See [development roadmap](#development-roadmap) for 
-details.
-
 ```
 phase [PRODUCT_PATH]
 phase [-o|--only-open] [PRODUCT_PATH]
