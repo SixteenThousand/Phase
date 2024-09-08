@@ -425,7 +425,9 @@ def initialise(product_path: str):
     config: dict[str,Any] = dict()
     config["pattern"] = prompt("What pattern should product files have?")
     config["limit"] = prompt(
-        "How many versions should be left in the main directory at a time?"
+        "How many versions should be left in the main directory at a " +
+        "time?\nDefault is 11",
+        default="11"
     )
     config["backup"] = dict()
     config["backup"]["sample"] = dict()
@@ -456,7 +458,8 @@ def initialise(product_path: str):
         default="%Y%m%d"
     )
     config["backup"]["release"]["destination"] = prompt(
-        "Where do you want those Releases to go? (path can be relative)",
+        "Where do you want those Releases to go? (path can be relative)\n" +
+        "Default is ./releases",
         default="./releases"
     )
     os.makedirs(config["backup"]["release"]["destination"],exist_ok=True)
