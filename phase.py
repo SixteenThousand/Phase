@@ -371,5 +371,43 @@ def add_desktop_file(product_path: str, config: dict[str,Any]):
     """))
     desktop_file.close()
 
+def remove_desktop_file(product_path,config: dict[str,Any]):
+    if "desktop" not in config:
+        print(textwrap.dedent("""
+            This product has no desktop entry file.
+            To make one, run
+            -> phase desktop --add
+        """))
+        exit(0)
+    # remove the desktop file itself
+    os.remove(config["desktop"]["location"])
+    # remove the desktop config
+    # the line range we want to remove
+    start_index: int = -1
+    end_index: int = -1
+    new_config: List[str] = []
+    config_file: TextIO
+    with open(f"{product_path}/.phase","r",encoding="utf8") as config_file:
+        for line in config_file:
+            new_config.append(line)
+    for i in range(len(new_config)):
+        if new_config[i].strip() == "[desktop]":
+            start_index = i
+            # get rid of any generated whitespace
+            if i > 0 and new_config[i-1].strip() == "":
+                start_index -= 1
+        # see if we've reached another table
+        if start_index >= 0 and \
+                new_config[i][0] == "[" and new_config[i][1:8] != "desktop":
+            end_index = i
+    if end_index < 0 and start_index >= 0:
+        end_index = len(new_config)
+    with open(f"{product_path}/.phase","w",encoding="utf8") as config_file:
+        for i in range(len(new_config)):
+            if start_index <= i and i < end_index:
+                continue
+            config_file.write(new_config[i])
+    
+
 
 if __name__ == "__main__": main()
