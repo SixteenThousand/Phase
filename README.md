@@ -197,8 +197,15 @@ cmd = 'rclone sync . GoogleDriveRemote:/directory/in/my/google/drive'
 
 These features may never be added, but are here for future reference should 
 I find some spare time for them:
-- Allow phase to put date-time-stamps anywhere in the file name, possibly by 
-  changing how the STAMP_FORMAT variable works.
+- [ ] Allow phase to put date-time-stamps anywhere in the file name, 
+  possibly by changing how the STAMP_FORMAT variable works.
+- [ ] BUG: when making a desktop file, punctuation (specifically ') will 
+  break the phase config, since you'll get a value like 'I'm tired', which 
+  is invalid TOML
+- [ ] Add more to help, including documentation of python datetime format 
+  codes
+- [ ] Remove the need to not use single quotes in answers to initialisation 
+  prompts
 
 ---
 
