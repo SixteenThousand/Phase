@@ -89,7 +89,7 @@ def main():
     os.chdir(flags.product_path)
     if flags.help:
         print("Phase, v0.7.1\nThe Best Worst Version Control")
-        exit()
+        sys.exit(0)
     # load product configration
     config: dict[str,Any] = dict()
     versions: Product = []
@@ -394,7 +394,7 @@ def add_desktop_file(product_path: str, config: dict[str,Any]):
                     -> phase desktop --remove
                     to get rid of the existing file, and then try again.
                 """))
-                exit(0)
+                sys.exit(1)
     desktop_file: TextIO = open(
         config["desktop"]["location"],
         "w",
@@ -416,7 +416,7 @@ def remove_desktop_file(product_path,config: dict[str,Any]):
             To make one, run
             -> phase desktop --add
         """))
-        exit(0)
+        sys.exit(1)
     # remove the desktop file itself
     os.remove(config["desktop"]["location"])
     # remove the desktop config
@@ -450,7 +450,7 @@ def initialise(product_path: str):
     if os.path.exists(product_path + "/.phase"):
         print("This directory already contains a .phase file!")
         print("Delete it if you wish to continue")
-        exit(0)
+        sys.exit(1)
     config: dict[str,Any] = dict()
     config["pattern"] = prompt("What pattern should product files have?")
     config["limit"] = prompt(
