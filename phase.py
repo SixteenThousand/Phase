@@ -54,33 +54,33 @@ class Flags():
         self.backup_action: BackupAction
         self.desktop_remove: bool
 
-NO_VERSIONS_ERRMSG = """\
-\x1b[1;31m\
-Phase Error: No product files found.
-\x1b[0m\
-There are no product files in this directory yet.
-Please make at least 1 product file before you try to use phase here.\
-"""
 
-NO_CONFIG_ERRMSG = """\
-\x1b[1;31m\
-Phase Error: No .phase file found.
-\x1b[0m\
-The directory you have specified is not managed by phase.
-If you wish for files in this directory to be 
-managed by phase, please run
-    \x1b[1mphase init\x1b[0m
-in this directory or
-    \x1b[1mphase init path/to/this/directory\x1b[0m
-outside of it.
-"""
 
 def check_is_product_dir(config: dict[str,Any],versions: Product):
     if not config:
-        print(NO_CONFIG_ERRMSG,file=sys.stderr)
+        print(
+            textwrap.dedent("""\
+            \x1b[1;31mPhase Error: No .phase file found.
+            \x1b[0mThe directory you have specified is not managed by phase.
+            If you wish for files in this directory to be 
+            managed by phase, please run
+                \x1b[1mphase init\x1b[0m
+            in this directory or
+                \x1b[1mphase init path/to/this/directory\x1b[0m
+            outside of it.
+            """),
+            file=sys.stderr
+        )
         sys.exit(1)
     if not versions:
-        print(NO_VERSIONS_ERRMSG,file=sys.stderr)
+        print(
+            textwrap.dedent("""\
+                \x1b[1;31mPhase Error: No product files found.
+                \x1b[0mThere are no product files in this directory yet.
+                Please make at least 1 product file before using phase here.
+            """),
+            file=sys.stderr
+        )
         sys.exit(1)
 
 def main():
