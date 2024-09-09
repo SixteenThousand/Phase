@@ -387,6 +387,10 @@ class TestFlagparse(ut.TestCase):
             },
         ]
         self.do_cases(tcases)
+    
+    def test_version(self):
+        self.assertTrue(phase.flagparse(["phase","-v"]).version)
+        self.assertTrue(phase.flagparse(["phase","--version"]).version)
 
 
 
