@@ -53,6 +53,7 @@ class Flags():
         self.output_dir: str = os.getcwd()
         self.backup_action: BackupAction
         self.desktop_remove: bool
+        self.version: bool = False
 
 class ConfigError(Exception):
     product_path: str
@@ -61,7 +62,7 @@ def main():
     flags = flagparse(sys.argv)
     flags.product_path = os.path.abspath(flags.product_path)
     os.chdir(flags.product_path)
-    if flags.help:
+    if flags.help or flags.version:
         print("Phase, v0.7.1\nThe Best Worst Version Control")
         exit()
     # load product configration
@@ -141,6 +142,8 @@ def flagparse(argv: List[str]) -> Flags:
             num_positional_args += 1
         elif argv[i] == "-h" or argv[i] == "--help":
             flags.help = True
+        elif argv[i] == "-v" or argv[i] == "--version":
+            flags.version = True
         elif argv[i] == "-o" or argv[i] == "--only-open":
             flags.only_open = True
         elif argv[i] == "-d" or argv[i] == "--output-directory":
