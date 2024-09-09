@@ -394,7 +394,9 @@ def add_desktop_file(product_path: str, config: dict[str,Any]):
                     -> phase desktop --remove
                     to get rid of the existing file, and then try again.
                 """))
+                conflicting_file.close()
                 sys.exit(1)
+        conflicting_file.close()
     desktop_file: TextIO = open(
         config["desktop"]["location"],
         "w",
@@ -513,6 +515,7 @@ def initialise(product_path: str):
         [backup.all]
         cmd = '{config["backup"]["all"]["cmd"]}'
     """))
+    config_file.close()
     create_desktop: bool = prompt_yn(
         "Create a desktop entry file?\n This will allow you to open " +
         "the latest version of the product from an app launcher",
