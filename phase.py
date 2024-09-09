@@ -54,9 +54,35 @@ class Flags():
         self.backup_action: BackupAction
         self.desktop_remove: bool
 
-class ConfigError(Exception):
-    product_path: str
-    
+NO_VERSIONS_ERRMSG = """\
+\x1b[1;31m\
+Phase Error: No product files found.
+\x1b[0m\
+There are no product files in this directory yet.
+Please make at least 1 product file before you try to use phase here.\
+"""
+
+NO_CONFIG_ERRMSG = """\
+\x1b[1;31m\
+Phase Error: No .phase file found.
+\x1b[0m\
+The directory you have specified is not managed by phase.
+If you wish for files in this directory to be 
+managed by phase, please run
+    \x1b[1mphase init\x1b[0m
+in this directory or
+    \x1b[1mphase init path/to/this/directory\x1b[0m
+outside of it.
+"""
+
+def check_is_product_dir(config: dict[str,Any],versions: Product):
+    if not config:
+        print(NO_CONFIG_ERRMSG,file=sys.stderr)
+        sys.exit(1)
+    if not versions:
+        print(NO_VERSIONS_ERRMSG,file=sys.stderr)
+        sys.exit(1)
+
 def main():
     flags = flagparse(sys.argv)
     flags.product_path = os.path.abspath(flags.product_path)
@@ -82,7 +108,7 @@ def main():
             )
             print(f"copy {flags.product_path} -> {new_name}")
         case Action.BACKUP:
-            if not config or not versions: raise ConfigError
+            check_is_product_dir(config,versions)
             match flags.backup_action:
                 case BackupAction.ALL:
                     cmd: str = config["backup"]["all"]["cmd"]
@@ -103,7 +129,7 @@ def main():
                         dst=config["backup"]["release"]["destination"]
                     )
         case Action.DESKTOP:
-            if not config: raise ConfigError
+            check_is_product_dir(config,versions)
             if flags.desktop_remove:
                 remove_desktop_file(flags.product_path,config)
             else:
@@ -111,7 +137,7 @@ def main():
         case Action.INIT:
             initialise(flags.product_path)
         case _:
-            if not config or not versions: raise ConfigError
+            check_is_product_dir(config,versions)
             if not flags.only_open:
                 # make backups
                 backup_sample(
