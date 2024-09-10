@@ -89,11 +89,11 @@ def main():
     flags.product_path = os.path.abspath(flags.product_path)
     os.chdir(flags.product_path)
     if flags.version:
-        print("Phase, v0.7.4 - The Best Worst Form Of Version Control")
+        print("Phase, v0.8.0 - The Best Worst Form Of Version Control")
         sys.exit(0)
     if flags.help:
         print(textwrap.dedent("""\
-            Phase, v0.7.4 - The Best Worst Form Of Version Control
+            Phase, v0.8.0 - The Best Worst Form Of Version Control
             
             Usage:
             \x1b[1mphase [PRODUCT_PATH]\x1b[0m
