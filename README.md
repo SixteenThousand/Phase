@@ -91,7 +91,7 @@ be added to the file name just before the file extension, if any.
 Note this is the only phase option that has nothing to do with a 
 version-managed product.
 
-#### Examples
+### Examples
 
 - `phase date -t='%Y-%m-%d' something.pdf` will rename 'something.pdf' to 
   'something_2024-08-29.pdf'
@@ -107,14 +107,12 @@ Adds or removes a desktop entry file^1 for the product at
 
 ## Getting Started
 
-Phase is literally just a python script (specifically it is the `phase.py` 
-you see above), so all you need to do to use it is get a copy of that file, 
-remove the `.py` extension, and put it somewhere on your system's `PATH`.
+Check you have the required dependencies, clone this repo to your machine, 
+and run `make install` (obviously you will need GNU Make for this).
 
 See dependencies below for more specific information, but that should be it.
 
-Go to the last tagged commit to get the latest (more-or-less) stable 
-version.
+Go to the last tagged commit to get the latest stable version.
 
 ### Dependencies
 
