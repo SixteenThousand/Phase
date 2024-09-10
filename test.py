@@ -387,6 +387,22 @@ class TestFlagparse(ut.TestCase):
             },
         ]
         self.do_cases(tcases)
+    
+    def test_version(self):
+        self.do_cases([
+            {
+                "input": ["-v"],
+                "expected": TestFlagparse.new_flags({
+                    "version": True,
+                })
+            },
+            {
+                "input": ["--version"],
+                "expected": TestFlagparse.new_flags({
+                    "version": True,
+                })
+            },
+        ])
 
 
 
