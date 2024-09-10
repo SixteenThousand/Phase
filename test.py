@@ -21,10 +21,10 @@ def main():
 
 
 def clear_old_seeds():
-    old_seed: List[str] =os.listdir(DATA_DIR)
+    old_seed: List[str] = os.listdir(DATA_DIR)
     if  len(old_seed) > 0:
         os.system(
-            f"cd {DATA_DIR} && rm -r {" ".join(os.listdir(DATA_DIR))}"
+            f"cd {DATA_DIR} && rm -rf {" ".join(os.listdir(DATA_DIR))}"
         )
 
 def pat_to_regex_test() -> bool:
@@ -86,7 +86,7 @@ def get_versions_test() -> bool:
     os.chdir(DATA_DIR)
     for example in examples:
         # re-seed DATA_DIR
-        os.system(f"rm -r {DATA_DIR}/*")
+        clear_old_seeds()
         for filename in example["seed_files"]:
             Path(filename).touch(exist_ok=False)
         for dirname in example["seed_dirs"]:
@@ -146,7 +146,7 @@ def clean_test() -> bool:
     os.chdir(DATA_DIR)
     for example in examples:
         # remove files from previous tests
-        os.system(f"rm -r {DATA_DIR}/*")
+        clear_old_seeds()
         # seed DATA_DIR with product files
         for version in example["versions"]:
             Path(version[0]).touch(exist_ok=False)
@@ -185,7 +185,7 @@ def backup_sample_test() -> bool:
             [ex_backup_sample_config["destination"][2:]]
     )
     # seed DATA_DIR accordingly
-    os.system(f"rm -r {DATA_DIR}/*")
+    clear_old_seeds()
     os.chdir(DATA_DIR)
     os.mkdir(ex_backup_sample_config["destination"])
     for version in ex_versions:
