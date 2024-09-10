@@ -4,7 +4,7 @@ test:
 build: test
 	cp phase.py ./bin/phase
 # requires root priviledges
-install:
+install: build
 	cp ./bin/phase /usr/bin/phase
 uninstall: install
 	rm /usr/bin/phase
