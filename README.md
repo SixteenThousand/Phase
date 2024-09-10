@@ -17,7 +17,6 @@ filename and be done with it. This is where *phase* comes in.
 phase [PRODUCT_PATH]
 phase [-o|--only-open] [PRODUCT_PATH]
 phase init [PRODUCT_PATH]
-phase config [PRODUCT_PATH]
 phase backup [--sample | --all | --release] [PRODUCT_PATH]
 phase release [PRODUCT_PATH]
 phase date [[-f|--format][=STAMP_FORMAT]] FILE
@@ -53,10 +52,6 @@ or by re-running `phase init` and responding 'no' when asked if they want to
 overwrite the existing configuration file.
 
 Phase will also prompt the user to create a desktop entry file^1
-
-### `phase config [PRODUCT_PATH]`
-
-An alias for `phase init` (see above).
 
 ### `phase backup [--sample | --all | --release] [PRODUCT_PATH]`
 
@@ -185,7 +180,6 @@ cmd = 'rclone sync . GoogleDriveRemote:/directory/in/my/google/drive'
 - [x] phase date
 - [x] phase desktop
 - [ ] phase init
-- [-] phase config
 
 ### Development Wishlist
 
