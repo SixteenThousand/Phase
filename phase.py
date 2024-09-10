@@ -89,11 +89,11 @@ def main():
     flags.product_path = os.path.abspath(flags.product_path)
     os.chdir(flags.product_path)
     if flags.version:
-        print("Phase, v0.8.1 - The Best Worst Form Of Version Control")
+        print("Phase, v0.8.2 - The Best Worst Form Of Version Control")
         sys.exit(0)
     if flags.help:
         print(textwrap.dedent("""\
-            Phase, v0.8.0 - The Best Worst Form Of Version Control
+            Phase, v0.8.2 - The Best Worst Form Of Version Control
             
             Usage:
             \x1b[1mphase [PRODUCT_PATH]\x1b[0m
@@ -105,8 +105,6 @@ def main():
             \x1b[1mphase init [PRODUCT_PATH]\x1b[0m
                 Tell phase to manage files in PRODUCT_PATH/the current working
                 directory
-            \x1b[1mphase config [PRODUCT_PATH]\x1b[0m
-                -- This option has not been built --
             \x1b[1mphase backup [--sample | --all | --release] [PRODUCT_PATH]
                 \x1b[0mMake backup copies of some versions of the product.
                 \x1b[1m--sample\x1b[0m Copies every Nth version, where N is 
