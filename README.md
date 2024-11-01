@@ -19,7 +19,7 @@ phase [-o|--only-open] [PRODUCT_PATH]
 phase init [PRODUCT_PATH]
 phase backup [--sample | --all | --release] [PRODUCT_PATH]
 phase release [PRODUCT_PATH]
-phase date [[-f|--format][=STAMP_FORMAT]] FILE
+phase date [[-f|--format] STAMP_FORMAT] [[-d|--output-directory] DIRECTORY] FILE
 phase desktop [--add|--remove] [PRODUCT_PATH]
 ```
 
@@ -69,9 +69,11 @@ Just make backups of the product.
 
 An alias for `phase backup --release`.
 
-### `phase date [[-f|--format][=STAMP_FORMAT]] FILE`
+### `phase date [[-f|--format] STAMP_FORMAT] [[-d|--output-directory] DIRECTORY] FILE`
 
-Adds a date-time-stamp to `FILE`, using the format `STAMP_FORMAT`. 
+Creates a copy of `FILE` with a date-time-stamp added to the filename, using 
+the format `STAMP_FORMAT` and in the directory `DIRECTORY`.
+
 `STAMP_FORMAT` is parsed using the python `datetime.strftime` function (see
 <https://docs.python.org/3/library/datetime.html#datetime.datetime#date.strftime>
 for docs). The main ones you will likely want to use are:
@@ -85,6 +87,9 @@ Time & date information will use the system locale. The date-time-stamp will
 be added to the file name just before the file extension, if any.
 Note this is the only phase option that has nothing to do with a 
 version-managed product.
+It defaults to `_%Y%m%d-%H%M%S`.
+
+`DIRECTORY` defaults to the current directory.
 
 ### Examples
 
@@ -182,7 +187,7 @@ cmd = 'rclone sync . GoogleDriveRemote:/directory/in/my/google/drive'
 - [x] phase release
 - [x] phase date
 - [x] phase desktop
-- [ ] phase init
+- [x] phase init
 
 ### Development Wishlist
 

@@ -98,33 +98,33 @@ def main():
             
             Usage:
             \x1b[1mphase [PRODUCT_PATH]\x1b[0m
-                Opens the latest version of the product at PRODUCT_PATH/the 
-                current working directory. Also deletes older versions and 
-                makes some backups
+                Opens the latest version of the product at PRODUCT_PATH/the current working directory.
+                Also deletes older versions and makes some backups
             \x1b[1mphase [-o|--only-open] [PRODUCT_PATH]\x1b[0m
                 Same as above, but skips the backup and clean steps
             \x1b[1mphase init [PRODUCT_PATH]\x1b[0m
-                Tell phase to manage files in PRODUCT_PATH/the current working
-                directory
-            \x1b[1mphase backup [--sample | --all | --release] [PRODUCT_PATH]
-                \x1b[0mMake backup copies of some versions of the product.
+                Tell phase to manage files in PRODUCT_PATH/the current working directory
+            \x1b[1mphase backup [--sample | --all | --release] [PRODUCT_PATH]\x1b[0m
+                Make backup copies of some versions of the product.
                 \x1b[1m--sample\x1b[0m Copies every Nth version, where N is 
-                a number you can configure (default 5)
+                    a number you can configure (default 5)
                 \x1b[1m--release\x1b[0m Copies the latest version, and 
-                appends a date-time stamp to the copy
+                    appends a date-time stamp to the copy
                 \x1b[1m--all\x1b[0m Runs a shell command, which you configure.
-                This command \x1b[3mshould\x1b[0m backup the whole directory,
-                but really it could do anything
+                    This command \x1b[3mshould\x1b[0m backup the whole directory,
+                    but really it could do anything
             \x1b[1mphase release [PRODUCT_PATH]\x1b[0m
                 Alias for phase backup --release
-            \x1b[1mphase date [[-f|--format][=STAMP_FORMAT]] FILE\x1b[0m
-                Appends a date-time stamp to the name of FILE.
-                This is the only command which does not require a 
-                phase-managed set of files (a "product")
+            \x1b[1mphase date [[-f|--format] STAMP_FORMAT] [[-d|--output-directory] DIRECTORY] FILE\x1b[0m
+                Appends a date-time stamp to the name of FILE in format STAMP_FORMAT and puts the result
+                in DIRECTORY.
+                    STAMP_FORMAT defaults to yyyymmdd-HHMMSS
+                    DIRECTORY defaults to the current directory
+                This is the only command which does not require a phase-managed set of files (a "product")
             \x1b[1mphase desktop [--add|--remove] [PRODUCT_PATH]\x1b[0m
-                Create or remove a desktop entry file for the product at 
-                PRODUCT_PATH/the current working directory.
-                This option in only useful on Linux systems
+                Create or remove a desktop entry file for the product at PRODUCT_PATH/the current
+                working directory.
+                This option is only useful on Linux systems
         """))
         sys.exit(0)
     # load product configration
