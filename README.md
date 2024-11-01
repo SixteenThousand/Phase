@@ -179,29 +179,22 @@ cmd = 'rclone sync . GoogleDriveRemote:/directory/in/my/google/drive'
  
 ---
  
-## Development Roadmap
-
-- [x] phase [PRODUCT_PATH]
-- [x] phase [-o|--only-open]
-- [x] phase backup
-- [x] phase release
-- [x] phase date
-- [x] phase desktop
-- [x] phase init
-
 ### Development Wishlist
 
 These features may never be added, but are here for future reference should 
 I find some spare time for them:
 - [ ] Allow phase to put date-time-stamps anywhere in the file name, 
   possibly by changing how the STAMP_FORMAT variable works.
+- [ ] Remove the need to not use single quotes in answers to initialisation 
+  prompts
 - [ ] BUG: when making a desktop file, punctuation (specifically ') will 
   break the phase config, since you'll get a value like 'I'm tired', which 
   is invalid TOML
 - [ ] Add more to help, including documentation of python datetime format 
   codes
-- [ ] Remove the need to not use single quotes in answers to initialisation 
-  prompts
+- [ ] Allow release to use a filename with a different extension; maybe have 
+  a backup.release.extension attribute?
+- [ ] Allow date-time-stamps to be used as version numbers
 
 ---
 
