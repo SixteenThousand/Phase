@@ -113,7 +113,10 @@ Go to the last tagged commit to get the latest stable version.
 
 - python >=3.6 (this is due to the `Pattern` type from the `typing` module 
   being used)
-- a UNIX-like operating system (i.e. not Windows)
+- a UNIX-like/POSIX operating system (i.e. not Windows)
+- ImageMagick (this is just to make the app icon; it can be circumvented, 
+  but you'll need to change the build script slightly to do this, and it 
+  will likely cause the app icon to not render properly)
 
 
 ## Configuration
