@@ -87,7 +87,8 @@ def check_is_product_dir(config: dict[str,Any],versions: Product):
 def main():
     flags = flagparse(sys.argv)
     flags.product_path = os.path.abspath(flags.product_path)
-    os.chdir(flags.product_path)
+    if flags.action != Action.DATE:
+        os.chdir(flags.product_path)
     if flags.version:
         print("Phase, v0.8.2 - The Best Worst Form Of Version Control")
         sys.exit(0)
