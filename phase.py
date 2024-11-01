@@ -447,6 +447,7 @@ def add_desktop_file(product_path: str, config: dict[str,Any]):
         GenericName={config["desktop"]["description"]}
         Exec=phase {"--only-open " if config["desktop"]["only_open"] else ""}{product_path}
         Type=Application
+        Icon=Phase
     """))
     desktop_file.close()
 
