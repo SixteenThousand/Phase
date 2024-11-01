@@ -1,6 +1,7 @@
 test:
 	# run unit tests
 	python3 test.py
+	rm -rf ./test-data/**
 build: test
 	cp phase.py ./bin/phase
 # requires root priviledges
