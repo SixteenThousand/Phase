@@ -3,9 +3,9 @@ test: phase.py test.py
 	python3 test.py
 	rm -rf test-data/** 2>/dev/null
 
-phase.py:
+bin/phase: phase.py
 	cp phase.py bin/phase
-build: phase.py
+build: bin/phase
 
 bin/Phase.png: Phase.svg
 	magick Phase.svg bin/Phase.png
