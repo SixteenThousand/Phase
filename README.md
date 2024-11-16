@@ -1,9 +1,10 @@
-# Phase
+<h1 style="text-align: center; font-size: 75px;"> <img src="./Phase.svg" 
+height="60" /> Phase </h1>
 
-Full and empty. Crescent and Gibbous. Wax and Wane. These are the different 
-versions of the moon.
+*Full and empty. Crescent and Gibbous. Wax and Wane. These are the different 
+versions of the moon.*
 
-*But how should you version your files?*
+But how should you version your files?
 
 If you're reading this, you are probably reading it on GitHub, a site 
 dedicated to proper version control. However, sometimes you don't want 
@@ -186,15 +187,16 @@ I find some spare time for them:
 - [ ] Allow phase to put date-time-stamps anywhere in the file name, 
   possibly by changing how the STAMP_FORMAT variable works.
 - [ ] Remove the need to not use single quotes in answers to initialisation 
-  prompts
-- [ ] BUG: when making a desktop file, punctuation (specifically ') will 
+  prompts; when making a desktop file, punctuation (specifically ') will 
   break the phase config, since you'll get a value like 'I'm tired', which 
   is invalid TOML
+- [ ] make desktop entry files always use 'phase' as GenericName
 - [ ] Add more to help, including documentation of python datetime format 
-  codes
+  codes; maybe make a `phase help command`?
 - [ ] Allow release to use a filename with a different extension; maybe have 
   a backup.release.extension attribute?
 - [ ] Allow date-time-stamps to be used as version numbers
+- [ ] create a `phase info` command to query the .phase file
 
 ---
 
